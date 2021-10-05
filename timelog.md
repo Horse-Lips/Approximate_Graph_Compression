@@ -20,5 +20,5 @@
 ### 04/10/2021
 * *0.5 Hours* Meeting with supervisor
 
-###05/10/2021
+### 05/10/2021
 * *0.5 Hours* Setup Github repo with project files, readme, timelog, etc...
