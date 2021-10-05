@@ -1,14 +1,15 @@
 package graphComponents;
 
+
 import java.util.List;
 
 
 /*Vertex class used for representing Graph nodes*/
 public class Vertex {
-	private int index;		//Index of the Vertex in the Graph Vertex list
+	private int index;				//Index of the Vertex in the Graph Vertex list
 	private List<Integer> adjList;	//List of Vertices adjacent to the Vertex
-	private int value;		//Value stored in the Vertex
-	private Vertex parent;	//Parent of Vertex (e.g. in shortest path)
+	private int value;				//Value stored in the Vertex
+	private Vertex parent;			//Parent of Vertex (e.g. in shortest path)
 	
 	public Vertex(int index) {
 		this.index = index;
