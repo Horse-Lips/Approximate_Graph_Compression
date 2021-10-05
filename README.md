@@ -20,6 +20,7 @@ The goal is to empirically evaluate the performance of these algorithms, as well
   
 ## Technologies
  - Java was the programming language agreed upon
+ - Eclipse IDE will be used
  - Github will be used for version control
  - Github issue tracker will be used for tracking issues
  - Overleaf will be used for writing the dissertation
