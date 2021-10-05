@@ -15,4 +15,11 @@ This project aims to understand the performance of two graph reduction rules for
 The goal is to empirically evaluate the performance of these algorithms, as well as understand the trade-offs between the running time and the quality of the solutions produced by these two algorithms.  
   
   
-*An edge contraction is an operation that removes an edge from the graph and merges the two vertices that it previously connected
+*An edge contraction is an operation that removes an edge from the graph and merges the two vertices that it previously connected  
+  
+  
+## Technologies
+ - Java was the programming language agreed upon
+ - Github will be used for version control
+ - Github issue tracker will be used for tracking issues
+ - Overleaf will be used for writing the dissertation
