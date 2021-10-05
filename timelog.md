@@ -24,3 +24,4 @@
 * *0.5 Hours* Setup Github repo with project files, readme, timelog, etc...
 * *1 Hour* Created basic data structures of graph
 * *1 Hour* Researched edge contractions
+* *1 Hour* Possible idea for edge contraction method
