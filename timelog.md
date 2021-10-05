@@ -22,3 +22,4 @@
 
 ### 05/10/2021
 * *0.5 Hours* Setup Github repo with project files, readme, timelog, etc...
+* *1 Hour* Created basic data structures of graph
