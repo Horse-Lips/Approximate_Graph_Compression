@@ -29,8 +29,8 @@ public class Vertex {
 	}
 	
 	/*Adds a vertex to the adjacency list*/
-	public void addToAdj(Vertex v) {
-		//this.adjList.add(v);
+	public void addToAdj(Vertex v, int weight) {
+		this.adjList.add(new AdjNode(v.getIndex(), weight));
 	}
 	
 	
