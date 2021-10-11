@@ -9,7 +9,6 @@ public class AdjNode {
 	public AdjNode(int index, int weight) {
 		this.index  = index;
 		this.weight = weight;
-		
 	}
 	
 	

@@ -25,3 +25,7 @@
 * *1 Hour* Created basic data structures of graph
 * *1 Hour* Researched edge contractions
 * *1 Hour* Possible idea for edge contraction method
+
+## Week 4
+### 11/10/2021
+* *0.5 Hours* Meeting with supervisor
