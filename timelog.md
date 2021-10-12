@@ -29,3 +29,6 @@
 ## Week 4
 ### 11/10/2021
 * *0.5 Hours* Meeting with supervisor
+
+###12/10/2021
+* *0.75 Hours* Meeting with supervisor
