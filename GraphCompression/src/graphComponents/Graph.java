@@ -26,4 +26,22 @@ public class Graph {
 	public int size() {
 		return this.vertCount;
 	}
+	
+	
+	public String toString() {
+		String retString = this.vertCount + "\n";
+		
+		for (int vertIndex = 0; vertIndex < this.vertCount; vertIndex++) {
+			String[] currentLine = {"0", "0", "0", "0", "0", "0", "0"};
+			Vertex currentVertex = this.getVertex(vertIndex);
+			
+			for (AdjNode currentAdj: currentVertex.getAdj()) {
+				currentLine[currentAdj.getIndex()] = Float.toString(currentAdj.getWeight());
+			}
+			
+			retString += String.join(" ", currentLine) + "\n";
+		}
+		
+		return retString;
+	}
 }

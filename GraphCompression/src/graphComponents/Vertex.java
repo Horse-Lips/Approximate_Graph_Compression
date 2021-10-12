@@ -1,6 +1,7 @@
 package graphComponents;
 
 
+import java.util.ArrayList;
 import java.util.List;
 
 
@@ -13,6 +14,9 @@ public class Vertex {
 	
 	public Vertex(int index) {
 		this.index = index;
+		this.adjList = new ArrayList<AdjNode>();
+		this.value = 0;
+		this.parent = null;
 	}
 	
 	
@@ -28,7 +32,7 @@ public class Vertex {
 	}
 	
 	/*Adds a vertex to the adjacency list*/
-	public void addToAdj(Vertex v, int weight) {
+	public void addToAdj(Vertex v, float weight) {
 		this.adjList.add(new AdjNode(v.getIndex(), weight));
 	}
 	
