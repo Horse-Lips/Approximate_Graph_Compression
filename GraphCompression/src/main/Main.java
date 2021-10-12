@@ -13,5 +13,8 @@ public class Main {
 		Graph G = General.fromFile(file);
 		System.out.println(G);
 		
+		G.Gauss(0);
+		System.out.println(G);
+		
 	}
 }

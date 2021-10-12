@@ -22,4 +22,10 @@ public class AdjNode {
 	public float getWeight() {
 		return this.weight;
 	}
+	
+	
+	/*Updates the vaule of weight*/
+	public void setWeight(float newWeight) {
+		this.weight = newWeight;
+	}
 }

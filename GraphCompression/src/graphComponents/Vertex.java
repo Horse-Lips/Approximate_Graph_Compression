@@ -8,7 +8,7 @@ import java.util.List;
 /*Vertex class used for representing Graph nodes*/
 public class Vertex {
 	private int index;				//Index of the Vertex in the Graph Vertex list
-	private List<AdjNode> adjList;	//List of Vertices adjacent to the Vertex
+	private ArrayList<AdjNode> adjList;	//List of Vertices adjacent to the Vertex
 	private int value;				//Value stored in the Vertex
 	private Vertex parent;			//Parent of Vertex (e.g. in shortest path)
 	
@@ -27,13 +27,19 @@ public class Vertex {
 	
 	
 	/*Returns the adjacency list of the Vertex*/
-	public List<AdjNode> getAdj() {
+	public ArrayList<AdjNode> getAdj() {
 		return this.adjList;
 	}
 	
 	/*Adds a vertex to the adjacency list*/
 	public void addToAdj(Vertex v, float weight) {
 		this.adjList.add(new AdjNode(v.getIndex(), weight));
+	}
+	
+	
+	/*Removes a vertex from the adjacency list*/
+	public void removeFromAdj(AdjNode adj) {
+		this.adjList.remove(adj);
 	}
 	
 	
