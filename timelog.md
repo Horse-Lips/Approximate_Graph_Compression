@@ -34,3 +34,4 @@
 * *0.75 Hours* Meeting with supervisor
 * *1.5 Hours* Created graphUtils and main packages, updated fields and data types, craeted toString method in Graph
 * *1.5 Hours* Implemented basic version of Gaussian elimination algorithm. Also added utility methods such as removing vertex from graph and adj list, and updating weight of adjnode.
+* *1 Hour* Upadated Vertex representations, fixed graph resizing
