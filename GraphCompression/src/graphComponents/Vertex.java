@@ -2,27 +2,32 @@ package graphComponents;
 
 
 import java.util.ArrayList;
-import java.util.List;
 
 
 /*Vertex class used for representing Graph nodes*/
 public class Vertex {
-	private int index;				//Index of the Vertex in the Graph Vertex list
+	private int ID;				//Index of the Vertex in the Graph Vertex list
 	private ArrayList<AdjNode> adjList;	//List of Vertices adjacent to the Vertex
 	private int value;				//Value stored in the Vertex
 	private Vertex parent;			//Parent of Vertex (e.g. in shortest path)
 	
-	public Vertex(int index) {
-		this.index = index;
+	public Vertex(int id) {
+		this.ID = id;
 		this.adjList = new ArrayList<AdjNode>();
 		this.value = 0;
 		this.parent = null;
 	}
 	
 	
-	/*Returns the index of the Vertex in the Graph Vertex list*/
-	public int getIndex() {
-		return this.index;
+	/*Returns the ID of the Vertex*/
+	public int getID() {
+		return this.ID;
+	}
+	
+	
+	/*Updates the ID of the Vertex*/
+	public void setID(int ID) {
+		this.ID = ID;
 	}
 	
 	
@@ -33,7 +38,7 @@ public class Vertex {
 	
 	/*Adds a vertex to the adjacency list*/
 	public void addToAdj(Vertex v, float weight) {
-		this.adjList.add(new AdjNode(v.getIndex(), weight));
+		this.adjList.add(new AdjNode(v, weight));
 	}
 	
 	

@@ -17,9 +17,15 @@ public class Graph {
 	}
 	
 	
-	/*Returns the Vertex at the given index*/
-	public Vertex getVertex(int i) {
-		return vertList[i];
+	/*Returns the Vertex with the given ID*/
+	public Vertex getVertex(int ID) {
+		for (Vertex v: this.vertList) {
+			if (ID == v.getID()) {
+				return v;
+			}
+		}
+		
+		return null;
 	}
 	
 	
@@ -30,32 +36,46 @@ public class Graph {
 	
 	
 	/*Removes the Vertex at index i and resizes the graph*/
-	public void removeVertex(int vertIndex) {
-		Vertex[] newVertList = new Vertex[this.vertCount - 1];
+	public void removeVertex(int vertID) {
+		Vertex toRemove = this.getVertex(vertID);
 		
+		if (toRemove == null) {
+			return;
+		}
+		
+		Vertex[] newVertList = new Vertex[this.vertCount - 1];
 		int currentIndex = 0;
 		
-		for (int i = 0; i < this.vertCount; i++) {
-			if (i != vertIndex) {
-				newVertList[currentIndex++] = this.getVertex(i);
+		for (Vertex v: this.vertList) {
+			if (v != toRemove) {
+				newVertList[currentIndex] = v;
+				v.setID(currentIndex);
+				
+				currentIndex++;
 			}
 		}
 		
 		this.vertList = newVertList;
-		this.vertCount -= 1;
+		this.vertCount = this.size() - 1;
 	}
 	
 	
 	/*Removes a Vertex using the Gaussian Elimination method*/
-	public void Gauss(int vertIndex) {
-		Vertex toRemove = this.getVertex(vertIndex);	//Retrieve Vertex to remove
+	public void Gauss(int vertID) {
+		Vertex toRemove = this.getVertex(vertID);	//Retrieve Vertex to remove
+		
+		/*Make sure Vertex to be removed is actually in the graph*/
+		if (toRemove == null) {
+			return;
+		}
+		
 		ArrayList<AdjNode> neighbours = toRemove.getAdj();
 		
 		for (AdjNode neighbourOne: neighbours) {
-			Vertex n1Vertex = this.getVertex(neighbourOne.getIndex());	//Get Vertex representation of neighbourOne
+			Vertex n1Vertex = neighbourOne.getVert();	//Get Vertex representation of neighbourOne
 			
 			for (AdjNode neighbourTwo: neighbours) {
-				Vertex n2Vertex = this.getVertex(neighbourTwo.getIndex());	//Get Vertex representation of neighbourTwo
+				Vertex n2Vertex = neighbourTwo.getVert();	//Get Vertex representation of neighbourTwo
 				
 				if (neighbourOne != neighbourTwo) {
 					float newWeight = neighbourOne.getWeight() + neighbourTwo.getWeight();	//Calculate the new weight of the path through the vertex to delete
@@ -64,7 +84,7 @@ public class Graph {
 					boolean noEdge  = true;		//Used to check if there was an existing edge between neighbourOne and neighbourTwo
 					
 					for (AdjNode n1Neighbour: n1Vertex.getAdj()) {	//Iterate over neighbourOne's neighbours
-						if (n1Neighbour.getIndex() == neighbourTwo.getIndex()) {
+						if (n1Neighbour.getVert() == neighbourTwo.getVert()) {
 							
 							if (n1Neighbour.getWeight() > newWeight) {
 								n1Neighbour.setWeight(newWeight);	//Update weight of the edge between neighbourOne and neighbourTwo
@@ -77,15 +97,15 @@ public class Graph {
 					
 					if (updated) {	//If we updated the weight of {n1, n2} we must do the same for {n2, n1}
 						for (AdjNode n2Neighbour: n2Vertex.getAdj()) {
-							if (n2Neighbour.getIndex() == neighbourOne.getIndex()) {
+							if (n2Neighbour.getVert() == neighbourOne.getVert()) {
 								n2Neighbour.setWeight(newWeight);
 								
 							}
 						}
 						
 					} else if (noEdge) {	//If no edge existed between n1 and n2 previously we must create one
-						n1Vertex.addToAdj(this.getVertex(neighbourTwo.getIndex()), newWeight);
-						n2Vertex.addToAdj(this.getVertex(neighbourOne.getIndex()), newWeight);
+						n1Vertex.addToAdj(n2Vertex, newWeight);
+						n2Vertex.addToAdj(n1Vertex, newWeight);
 						
 					}
 				}
@@ -94,7 +114,7 @@ public class Graph {
 				AdjNode n2ToRemove = null;
 				
 				for (AdjNode n2Neighbour: n2Vertex.getAdj()) {
-					if (n2Neighbour.getIndex() == vertIndex) {
+					if (n2Neighbour.getVert() == toRemove) {
 						n2ToRemove = n2Neighbour;
 					}
 				}
@@ -106,7 +126,7 @@ public class Graph {
 			AdjNode n1ToRemove = null;
 			
 			for (AdjNode n1Neighbour: n1Vertex.getAdj()) {
-				if (n1Neighbour.getIndex() == vertIndex) {
+				if (n1Neighbour.getVert() == toRemove) {
 					n1ToRemove = n1Neighbour;
 				}
 			}
@@ -114,22 +134,29 @@ public class Graph {
 			n1Vertex.removeFromAdj(n1ToRemove);
 		}
 		
-		this.removeVertex(vertIndex);	//Finally, remove the vertex to be removed from the graph
+		this.removeVertex(vertID);	//Finally, remove the vertex to be removed from the graph
 	}
 	
 	
 	public String toString() {
-		String retString = this.vertCount + "\n";
+		String retString = this.size() + "\n";
 		
-		for (int vertIndex = 0; vertIndex < this.vertCount; vertIndex++) {
-			String[] currentLine = {"0", "0", "0", "0", "0", "0", "0"};
-			Vertex currentVertex = this.getVertex(vertIndex);
+		for (int vertID = 0; vertID < this.size(); vertID++) {
+			Vertex currentVertex = this.getVertex(vertID);
 			
-			for (AdjNode currentAdj: currentVertex.getAdj()) {
-				currentLine[currentAdj.getIndex()] = Float.toString(currentAdj.getWeight());
+			if (currentVertex != null) {
+				String[] currentLine = new String[this.size()];
+				
+				for (int i = 0; i < this.size(); i++) {
+					currentLine[i] = "0";
+				}
+				
+				for (AdjNode currentAdj: currentVertex.getAdj()) {
+					currentLine[currentAdj.getVert().getID()] = Float.toString(currentAdj.getWeight());
+				}
+				
+				retString += String.join(" ", currentLine) + "\n";
 			}
-			
-			retString += String.join(" ", currentLine) + "\n";
 		}
 		
 		return retString;
