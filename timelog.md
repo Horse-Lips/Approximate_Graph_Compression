@@ -40,3 +40,4 @@
 * *0.5 Hours* Added plan.md, set up Overleaf
 * *0.5 Hours* Wrote formal definition of graph compression into introduction of dissertation
 * *2 Hours* Implemented Vertex sparsification method, fixed some errors in Gaussian method
+* *0.5 Hours* Minor tweaks to both algorithms

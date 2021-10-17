@@ -74,17 +74,16 @@ public class Graph {
 				Vertex n2Vertex = n2Adj.getVert();	//Get Vertex representation of neighbourTwo
 				AdjNode n2ToRemove = null;	//Edge containing toRemove to be deleted
 				
-				if (n1Adj != n2Adj) {
+				if (n1Vertex != n2Vertex && n1Vertex != toRemove && n2Vertex != toRemove) {
 					float newWeight = n1Adj.getWeight() + n2Adj.getWeight();	//Calculate the new weight of the path through the vertex to delete
 					boolean noEdge  = true;		//Used to check if there was an existing edge between neighbourOne and neighbourTwo
 					
-					
-					
 					for (AdjNode n1Neighbour: n1Vertex.getAdj()) {	//Iterate over neighbourOne's neighbours
 						if (n1Neighbour.getVert() == n2Vertex) {
+							noEdge = false;
+							
 							if (n1Neighbour.getWeight() > newWeight) {
 								n1Neighbour.setWeight(newWeight);	//Update weight of the edge between neighbourOne and neighbourTwo if it existed previously
-								noEdge = false;
 							}
 							
 						} else if (n1Neighbour.getVert() == toRemove) {
@@ -95,9 +94,10 @@ public class Graph {
 					
 					for (AdjNode n2Neighbour: n2Vertex.getAdj()) {	//Here we iterate over neighbourTwo's neighbours as we'd need to anyway to determine the edge conatining toRemove to delete
 						if (n2Neighbour.getVert() == n1Vertex) {
+							noEdge = false;
+							
 							if (n2Neighbour.getWeight() > newWeight) {
 								n2Neighbour.setWeight(newWeight);
-								noEdge = false;
 							}
 							
 						} else if (n2Neighbour.getVert() == toRemove) {
@@ -127,6 +127,7 @@ public class Graph {
 	public void contract(int toRemoveID) {
 		Vertex toRemove  = this.getVertex(toRemoveID);
 		
+		if (toRemove == null) { return; } //Check that vertex to be removed is actually in the graph
 		/*
 		 * The following selects an edge to contract, or alternatively selects the Vertex that will absorb "toRemove" using the probability of the edge
 		 * The probability of the edge is the weight of the edge divided by the sum of all edge weights containing the Vertex
