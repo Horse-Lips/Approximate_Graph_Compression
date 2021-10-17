@@ -39,9 +39,7 @@ public class Graph {
 	public void removeVertex(int vertID) {
 		Vertex toRemove = this.getVertex(vertID);
 		
-		if (toRemove == null) {
-			return;
-		}
+		if (toRemove == null) { return; }
 		
 		Vertex[] newVertList = new Vertex[this.vertCount - 1];
 		int currentIndex = 0;
@@ -65,9 +63,7 @@ public class Graph {
 		Vertex toRemove = this.getVertex(vertID);	//Retrieve Vertex to remove
 		
 		/*Make sure Vertex to be removed is actually in the graph*/
-		if (toRemove == null) {
-			return;
-		}
+		if (toRemove == null) { return; }
 		
 		ArrayList<AdjNode> neighbours = toRemove.getAdj();
 		
