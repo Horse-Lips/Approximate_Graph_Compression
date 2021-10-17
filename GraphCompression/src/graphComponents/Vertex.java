@@ -50,7 +50,7 @@ public class Vertex {
 	
 	/*Removes a vertex from the adjacency list*/
 	public void removeFromAdj(AdjNode adj) {
-		if (adj != null) {
+		if (adj != null) {	//This only occurs in certain circumstances, e.g. in Graph.Gauss when n1Adj == n2Adj
 			this.adjList.remove(adj);
 			this.totalEdgeWeight -= adj.getWeight();	//Remove weight from the cumulative edge weight
 		}
