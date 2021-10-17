@@ -11,7 +11,7 @@
 * **Research problem**
 * **Set up basic data structures and tools such as github etc**
 * **Begin implementing algorithms to be analysed**
-* **Week 5**
+* **Conduct some analysis**
 * **Week 6**
 * **Week 7**
 * **Week 8**
