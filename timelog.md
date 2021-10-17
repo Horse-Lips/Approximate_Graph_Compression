@@ -37,4 +37,5 @@
 * *1 Hour* Upadated Vertex representations, fixed graph resizing
 
 ###17/10/2021
-* *.5 Hours* Added plan.md, set up Overleaf
+* *0.5 Hours* Added plan.md, set up Overleaf
+* *0.5 Hours* Wrote formal definition of graph compression into introduction of dissertation
