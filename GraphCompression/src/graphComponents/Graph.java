@@ -134,6 +134,99 @@ public class Graph {
 	}
 	
 	
+	/*Contracts the edge between the nodes with IDs "toRemoveID" and "superNodeID"*/
+	public void contract(int toRemoveID) {
+		Vertex toRemove  = this.getVertex(toRemoveID);
+		
+		/*
+		 * The following selects an edge to contract, or alternatively selects the Vertex that will absorb "toRemove" using the probability of the edge
+		 * The probability of the edge is the weight of the edge divided by the sum of all edge weights containing the Vertex
+		 * The sum of all edge weights is calculated when adding edges to a Vertex in order to save time and is retrieved using v.getTotWeight() for some Vertex v
+		*/
+		double randProb  = Math.random();
+		double cumSum    = 0;
+		
+		float removedEdgeWeight = 0;	//The weight of the edge being contracted
+		
+		AdjNode edgeToContract = null;
+		
+		for (AdjNode adj: toRemove.getAdj()) {
+			double currentProb = adj.getWeight() / toRemove.getTotWeight();
+			cumSum += currentProb;
+			
+			if (cumSum >= randProb) {	//If the cumsum exceeds the probability then we have selected an edge
+				edgeToContract = adj;
+				removedEdgeWeight = adj.getWeight();
+				
+				break;
+			}
+		}
+		
+		if (edgeToContract == null) {	//Something has failed and we were unable to select an edge to contract
+			return;
+		}
+		
+		
+		
+		
+		/*TESTING*/
+		System.out.println("Merging with Vertex with ID " + edgeToContract.getVert().getID());
+		
+		
+		
+		Vertex superNode = edgeToContract.getVert();	//The supernode after edge contraction has been performed
+		
+		/*The following removes the edge between superNode and toRemove*/
+		AdjNode removeFromSuper = null;
+		
+		for (AdjNode adjSuper: superNode.getAdj()) {
+			if (adjSuper.getVert() == toRemove) {
+				removeFromSuper = adjSuper;
+			}
+		}
+		
+		superNode.removeFromAdj(removeFromSuper);
+		
+		
+		for (AdjNode adjToRemove: toRemove.getAdj()) {	//Iterate over toRemove's neighbours
+			if (adjToRemove != edgeToContract) {
+				Vertex removeNeighbourVert = adjToRemove.getVert();					//Get Vertex representation of neighbour
+				float newEdgeWeight = adjToRemove.getWeight() + removedEdgeWeight;	//Weight of path from neighbour to superNode through toRemove
+				
+				boolean updated = false;		//Used to check if an edge to superNode already exists
+				AdjNode edgeToToRemove = null;	//Edge containing toRemove
+				
+				for (AdjNode adjNeighbour: removeNeighbourVert.getAdj()) {	//Iterate over the neighbour's neighbours
+					if (adjNeighbour.getVert() == superNode) {	//An edge already exists to the super node
+						updated = true;	//Indicate we have made an update
+						
+						if (adjNeighbour.getWeight() > newEdgeWeight) {	//Make an update if necessary
+							adjNeighbour.setWeight(newEdgeWeight);
+						}
+						
+					} else if (adjNeighbour.getVert() == toRemove) {
+						edgeToToRemove = adjNeighbour;	//Store edge containing toRemove
+						
+					}
+				}
+				
+				if (!updated) {	//If no update was made, there is no edge containing superNode so we update the existing edge to take us to superNode "through" toRemove
+					edgeToToRemove.setVert(superNode);
+					edgeToToRemove.setWeight(newEdgeWeight);
+					
+					superNode.addToAdj(adjToRemove.getVert(), newEdgeWeight);	//Since no edge exists, add an edge from superNode to the neighbour of toRemove
+					
+				} else {	//If an update was made then we can simply remove the edge containing toRemove
+					removeNeighbourVert.removeFromAdj(edgeToToRemove);
+					
+				}
+			}
+		}
+		
+		this.removeVertex(toRemoveID); //Then we remove toRemove from the Graph
+	}
+	
+	
 	public String toString() {
 		String retString = this.size() + "\n";
 		

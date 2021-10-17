@@ -11,11 +11,15 @@ public class Vertex {
 	private int value;				//Value stored in the Vertex
 	private Vertex parent;			//Parent of Vertex (e.g. in shortest path)
 	
+	private double totalEdgeWeight; //Sum of the edge weights of all edges containing this Vertex (Weights added in addToAdj method)
+	
 	public Vertex(int id) {
 		this.ID = id;
 		this.adjList = new ArrayList<AdjNode>();
 		this.value = 0;
 		this.parent = null;
+		
+		this.totalEdgeWeight = 0;
 	}
 	
 	
@@ -39,12 +43,17 @@ public class Vertex {
 	/*Adds a vertex to the adjacency list*/
 	public void addToAdj(Vertex v, float weight) {
 		this.adjList.add(new AdjNode(v, weight));
+		
+		this.totalEdgeWeight += weight;	//Add weight to the cumulative edge weight
 	}
 	
 	
 	/*Removes a vertex from the adjacency list*/
 	public void removeFromAdj(AdjNode adj) {
-		this.adjList.remove(adj);
+		if (adj != null) {
+			this.adjList.remove(adj);
+			this.totalEdgeWeight -= adj.getWeight();	//Remove weight from the cumulative edge weight
+		}
 	}
 	
 	
@@ -67,5 +76,11 @@ public class Vertex {
 	/*Updates the parent of the Vertex*/
 	public void setParent(Vertex parent) {
 		this.parent = parent;
+	}
+	
+	
+	/*Returns the cumulative edge weight of all edges containing this Vertex*/
+	public double getTotWeight() {
+		return this.totalEdgeWeight;
 	}
 }

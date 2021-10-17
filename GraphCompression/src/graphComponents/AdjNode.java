@@ -18,6 +18,12 @@ public class AdjNode {
 	}
 	
 	
+	/*Updates the Vertex on the "other end" of the edge*/
+	public void setVert(Vertex newVert) {
+		this.v = newVert;
+	}
+	
+	
 	/*Returns weight of the edge to reach this Vertex from some adjacent Vertex*/
 	public float getWeight() {
 		return this.weight;
