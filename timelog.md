@@ -42,3 +42,7 @@
 * *2 Hours* Implemented Vertex sparsification method, fixed some errors in Gaussian method
 * *0.5 Hours* Minor tweaks to both algorithms
 * *0.5 Hours* Fixed issues with algorithms giving incorrect weights
+
+## Week 5
+### 18/10/2021
+* *0.5 Hours* Meeting with supervisor

@@ -11,7 +11,7 @@
 * **Research problem**
 * **Set up basic data structures and tools such as github etc**
 * **Begin implementing algorithms to be analysed**
-* **Conduct some analysis**
+* **Implement Dijkstra's algorithm, min-degree heuristic, priority queue, research alias method**
 * **Week 6**
 * **Week 7**
 * **Week 8**
