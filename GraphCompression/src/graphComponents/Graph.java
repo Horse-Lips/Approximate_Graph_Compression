@@ -18,9 +18,9 @@ public class Graph {
 	
 	
 	/*Returns the Vertex with the given ID*/
-	public Vertex getVertex(int ID) {
+	public Vertex getVertex(int index) {
 		for (Vertex v: this.vertList) {
-			if (ID == v.getID()) {
+			if (index == v.getIndex()) {
 				return v;
 			}
 		}
@@ -36,8 +36,8 @@ public class Graph {
 	
 	
 	/*Removes the Vertex at index i and resizes the graph*/
-	public void removeVertex(int vertID) {
-		Vertex toRemove = this.getVertex(vertID);
+	public void removeVertex(int vertIndex) {
+		Vertex toRemove = this.getVertex(vertIndex);
 		
 		if (toRemove == null) { return; }
 		
@@ -47,7 +47,7 @@ public class Graph {
 		for (Vertex v: this.vertList) {
 			if (v != toRemove) {
 				newVertList[currentIndex] = v;
-				v.setID(currentIndex);
+				v.setIndex(currentIndex);
 				
 				currentIndex++;
 			}
@@ -59,8 +59,8 @@ public class Graph {
 	
 	
 	/*Removes a Vertex using the Gaussian Elimination method*/
-	public void Gauss(int vertID) {
-		Vertex toRemove = this.getVertex(vertID);	//Retrieve Vertex to remove using ID
+	public void Gauss(int vertIndex) {
+		Vertex toRemove = this.getVertex(vertIndex);	//Retrieve Vertex to remove using ID
 		
 		if (toRemove == null) { return; }	//Make sure Vertex to be removed is actually in the graph
 		
@@ -119,13 +119,13 @@ public class Graph {
 			n1Vertex.removeFromAdj(n1ToRemove);
 		}
 		
-		this.removeVertex(vertID);	//Finally, remove the vertex to be removed from the graph
+		this.removeVertex(vertIndex);	//Finally, remove the vertex to be removed from the graph
 	}
 	
 	
 	/*Contracts the edge between the nodes with IDs "toRemoveID" and "superNodeID"*/
-	public void contract(int toRemoveID) {
-		Vertex toRemove  = this.getVertex(toRemoveID);
+	public void contract(int toRemoveIndex) {
+		Vertex toRemove  = this.getVertex(toRemoveIndex);
 		
 		if (toRemove == null) { return; } //Check that vertex to be removed is actually in the graph
 		/*
@@ -206,7 +206,7 @@ public class Graph {
 			}
 		}
 		
-		this.removeVertex(toRemoveID); //Then we remove toRemove from the Graph
+		this.removeVertex(toRemoveIndex); //Then we remove toRemove from the Graph
 	}
 	
 	
@@ -224,7 +224,7 @@ public class Graph {
 				}
 				
 				for (AdjNode currentAdj: currentVertex.getAdj()) {
-					currentLine[currentAdj.getVert().getID()] = Float.toString(currentAdj.getWeight());
+					currentLine[currentAdj.getVert().getIndex()] = Float.toString(currentAdj.getWeight());
 				}
 				
 				retString += String.join(" ", currentLine) + "\n";
