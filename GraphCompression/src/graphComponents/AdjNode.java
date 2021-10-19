@@ -30,7 +30,7 @@ public class AdjNode {
 	}
 	
 	
-	/*Updates the vaule of weight*/
+	/*Updates the value of weight*/
 	public void setWeight(float newWeight) {
 		this.weight = newWeight;
 	}

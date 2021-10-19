@@ -17,6 +17,41 @@ public class SimpleQueuePrio<Item> {
 			this.next = null;
 			this.prev = null;
 		}
+		
+		/*Returns the value stored in the Node*/
+		public Item getVal() {
+			return this.value;
+		}
+		
+		
+		/*Returns the priority of this Node*/
+		public int getPrio() {
+			return this.prio;
+		}
+		
+		
+		/*Returns the next Node in the queue*/
+		public Node<Item> getNext() {
+			return this.next;
+		}
+		
+		
+		/*Updates the next Node in the queue*/
+		public void setNext(Node<Item> newNext) {
+			this.next = newNext;
+		}
+		
+		
+		/*Returns the prev Node in the queue*/	//CURRENTLY NOT NEEDED
+		/*public Node<Item> getPrev() {
+			return this.prev;
+		}*/
+		
+		
+		/*Updates the prev Node in the queue*/
+		public void setPrev(Node<Item> newPrev) {
+			this.prev = newPrev;
+		}
 	}
 	
 	
@@ -28,16 +63,16 @@ public class SimpleQueuePrio<Item> {
 	
 	
 	/*Removes item at the head of the queue and returns it*/
-	public Node<Item> pop() {
+	public Item pop() {
 		Node<Item> temp = this.head;
 		
-		this.head = this.head.next;
+		this.head = this.head.getNext();
 		
 		if (this.head != null) { 
-			this.head.prev = null;
+			this.head.setPrev(null);
 		}
 		
-		return temp;
+		return temp.getVal();
 	}
 	
 	
@@ -55,21 +90,21 @@ public class SimpleQueuePrio<Item> {
 		Node<Item> prevNode    = null;
 		Node<Item> currentNode = this.head;
 		
-		while (currentNode != null && prio >= currentNode.prio) {
+		while (currentNode != null && prio >= currentNode.getPrio()) {
 			prevNode = currentNode;
-			currentNode = currentNode.next;
+			currentNode = currentNode.getNext();
 		}
 		
 		if (currentNode == null) {	//Add item to back of queue
-			prevNode.next = newNode;
-			newNode.prev = prevNode;
+			prevNode.setNext(newNode);
+			newNode.setPrev(prevNode);
 			
 		} else {	//If not at back of queue then prio < currentNode.prio
-			prevNode.next    = newNode;
-			newNode.prev     = prevNode;
+			prevNode.setNext(newNode);
+			newNode.setPrev(prevNode);
 			
-			newNode.next     = currentNode;
-			currentNode.prev = newNode;
+			newNode.setNext(currentNode);
+			currentNode.setPrev(newNode);
 			
 		}
 	}
@@ -86,10 +121,10 @@ public class SimpleQueuePrio<Item> {
 		Node<Item> currentNode = this.head;
 		
 		while (currentNode.next != null) {
-			currentNode = currentNode.next;
+			currentNode = currentNode.getNext();
 		}
 		
-		currentNode.next = newNode;
-		newNode.prev = currentNode;
+		currentNode.setNext(newNode);
+		newNode.setPrev(currentNode);
 	}
 }
