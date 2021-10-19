@@ -46,3 +46,6 @@
 ## Week 5
 ### 18/10/2021
 * *0.5 Hours* Meeting with supervisor
+
+### 19/10/2021
+* *0.5 Hours* Implemented priority/FIFO queue data structure
