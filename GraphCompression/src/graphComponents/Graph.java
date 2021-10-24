@@ -213,8 +213,8 @@ public class Graph {
 	public String toString() {
 		String retString = this.size() + "\n";
 		
-		for (int vertID = 0; vertID < this.size(); vertID++) {
-			Vertex currentVertex = this.getVertex(vertID);
+		for (int vertIndex = 0; vertIndex < this.size(); vertIndex++) {
+			Vertex currentVertex = this.getVertex(vertIndex);
 			
 			if (currentVertex != null) {
 				String[] currentLine = new String[this.size()];
