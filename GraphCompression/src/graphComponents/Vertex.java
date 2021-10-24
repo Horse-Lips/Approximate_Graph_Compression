@@ -83,4 +83,11 @@ public class Vertex {
 	public double getTotWeight() {
 		return this.totalEdgeWeight;
 	}
+	
+	
+	public String toString() {
+		String retString = "Vertex Object: \nIndex: " + this.getIndex() + "\nDegree: " + this.adjList.size() + "\nParent Index: " + this.getParent().getIndex();
+		
+		return retString;
+	}
 }
