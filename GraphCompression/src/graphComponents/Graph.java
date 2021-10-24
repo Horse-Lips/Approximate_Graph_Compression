@@ -125,11 +125,32 @@ public class Graph {
 	}
 	
 	
+	/*Carries out Vertex sparsification using minimum degree heuristic*/
+	public void sparsify() {
+		SimpleQueuePrio<Vertex> nonTermQueue = new SimpleQueuePrio<Vertex>();	//Queue containing all nonterminals, priority is degree using lower priorities
+		
+		for (Vertex v: this.vertList) {
+			if (!v.getTerminal()) {
+				nonTermQueue.insert(v, v.getAdj().size());	//Degree calculated using size of adjacency list since undirected (or symmetric directed)
+			}
+		}
+		
+		Vertex currentVert;
+		
+		while ((currentVert = nonTermQueue.pop()) != null) {	//While there are non-terminals to contract, contract them
+			int success = contract(currentVert.getIndex());
+			
+			//System.out.println("Contracted " + currentVert.getVal() + " with output " + success);
+			//System.out.println(this);
+		}
+	}
+	
+	
 	/*Contracts the edge between the nodes with IDs "toRemoveID" and "superNodeID"*/
-	public void contract(int toRemoveIndex) {
+	public int contract(int toRemoveIndex) {
 		Vertex toRemove  = this.getVertex(toRemoveIndex);
 		
-		if (toRemove == null) { return; } //Check that vertex to be removed is actually in the graph
+		if (toRemove == null) { return -1; } //Check that vertex to be removed is actually in the graph
 		/*
 		 * The following selects an edge to contract, or alternatively selects the Vertex that will absorb "toRemove" using the probability of the edge
 		 * The probability of the edge is the weight of the edge divided by the sum of all edge weights containing the Vertex
@@ -155,7 +176,7 @@ public class Graph {
 		}
 		
 		if (edgeToContract == null) {	//Something has failed and we were unable to select an edge to contract
-			return;
+			return -2;
 		}
 		
 		
@@ -209,6 +230,8 @@ public class Graph {
 		}
 		
 		this.removeVertex(toRemoveIndex); //Then we remove toRemove from the Graph
+		
+		return 1;
 	}
 	
 	

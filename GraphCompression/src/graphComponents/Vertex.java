@@ -8,7 +8,7 @@ import java.util.ArrayList;
 public class Vertex {
 	private int index;				//Index of the Vertex in the Graph Vertex list
 	private ArrayList<AdjNode> adjList;	//List of Vertices adjacent to the Vertex
-	private int value;				//Value stored in the Vertex
+	private String value;				//Value stored in the Vertex
 	private Vertex parent;			//Parent of Vertex (e.g. in shortest path)
 	
 	private double totalEdgeWeight; //Sum of the edge weights of all edges containing this Vertex (Weights added in addToAdj method)
@@ -22,7 +22,7 @@ public class Vertex {
 	public Vertex(int index) {
 		this.index = index;
 		this.adjList = new ArrayList<AdjNode>();
-		this.value = 0;
+		this.value = "";
 		this.parent = null;
 		
 		this.totalEdgeWeight = 0;
@@ -70,13 +70,13 @@ public class Vertex {
 	
 	
 	/*Returns the value of the Vertex*/
-	public int getVal() {
+	public String getVal() {
 		return this.value;
 	}
 	
 	/*Updates the value of the Vertex*/
-	public void setVal(int value) {
-		this.value = value;
+	public void setVal(String val) {
+		this.value = val;
 	}
 	
 	

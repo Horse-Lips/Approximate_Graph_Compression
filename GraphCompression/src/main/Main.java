@@ -4,6 +4,7 @@ package main;
 import java.io.IOException;
 
 import graphComponents.Graph;
+import graphComponents.Vertex;
 import graphUtils.General;
 
 public class Main {
@@ -15,10 +16,22 @@ public class Main {
 		
 		Graph G = General.fromFile(file1);
 		
+		/*FOR TESTING - set value of Vertices to A, B, C, etc...*/
+		String[] names = {"A", "B", "C", "D", "E", "F", "G"};
+		
+		for (int i = 0; i < G.size(); i++) {
+			G.getVertex(i).setVal(names[i]);
+		}
+		
 		int end = 6;
 		G.dijkstra(0, end);
 		
 		General.printPath(G.getVertex(end));
+		
+		System.out.println(G);
+		G.sparsify();
+		
+		/*FOR TESTING*/
 		
 		
 		/*Graph G1 = General.fromFile(file1);
