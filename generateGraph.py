@@ -8,9 +8,16 @@ Usage:
  - python generateGraph.py outFile graphSize
 """
 size = int(sys.argv[2])
-randomArray = np.random.randint(0, 50, (size, size))
+A = np.zeros((size, size))
 
-np.fill_diagonal(randomArray, 0)
+for i in range(0, size):
+    randRow = np.random.randint(0, 50, (size, ))
+    
+    A[i, :] = randRow
+    A[:, i] = randRow.T
+
+np.fill_diagonal(A, 0)
+
 
 outFile = open(sys.argv[1], 'w')
 outFile.write(str(size))
@@ -18,7 +25,7 @@ outFile.write("\n")
 
 for i in range(int(size)):
     for j in range(int(size)):
-        outFile.write(str(randomArray[i, j]))
+        outFile.write(str(A[i, j]))
         outFile.write(" ")
         
     outFile.write("\n")
