@@ -5,12 +5,12 @@ public class SimpleQueuePrio<Item> {
 	
 	private static class Node<Item> {
 		private Item value;	//Value stored in the Node
-		private int prio;	//Priority of the Node in the queue
+		private float prio;	//Priority of the Node in the queue
 		
 		private Node<Item> next;	//Next node in queue
 		private Node<Item> prev;	//Prev node in queue
 		
-		public Node(Item value, int prio) {
+		public Node(Item value, float prio) {
 			this.value = value;
 			this.prio = prio;
 			
@@ -25,7 +25,7 @@ public class SimpleQueuePrio<Item> {
 		
 		
 		/*Returns the priority of this Node*/
-		public int getPrio() {
+		public float getPrio() {
 			return this.prio;
 		}
 		
@@ -42,10 +42,10 @@ public class SimpleQueuePrio<Item> {
 		}
 		
 		
-		/*Returns the prev Node in the queue*/	//CURRENTLY NOT NEEDED
-		/*public Node<Item> getPrev() {
+		/*Returns the prev Node in the queue*/
+		public Node<Item> getPrev() {
 			return this.prev;
-		}*/
+		}
 		
 		
 		/*Updates the prev Node in the queue*/
@@ -64,6 +64,10 @@ public class SimpleQueuePrio<Item> {
 	
 	/*Removes item at the head of the queue and returns it*/
 	public Item pop() {
+		if (this.head == null) {
+			return null;
+		}
+		
 		Node<Item> temp = this.head;
 		
 		this.head = this.head.getNext();
@@ -77,7 +81,7 @@ public class SimpleQueuePrio<Item> {
 	
 	
 	/*Inserts an item into the queue with the given priority*/
-	public void insert(Item value, int prio) {
+	public void insert(Item value, float prio) {
 		Node<Item> newNode = new Node<Item>(value, prio);
 		
 		if (this.head == null) {	//Update head if no items in queue
@@ -85,7 +89,6 @@ public class SimpleQueuePrio<Item> {
 			
 			return;
 		}
-		
 		
 		Node<Item> prevNode    = null;
 		Node<Item> currentNode = this.head;
@@ -95,11 +98,17 @@ public class SimpleQueuePrio<Item> {
 			currentNode = currentNode.getNext();
 		}
 		
-		if (currentNode == null) {	//Add item to back of queue
+		if (currentNode == null) {		//Add item to back of queue
 			prevNode.setNext(newNode);
 			newNode.setPrev(prevNode);
+		
+		} else if (prevNode == null) {	//prevNode will be null if we update the head of the queue
+			this.head.setPrev(newNode);
+			newNode.setNext(this.head);
 			
-		} else {	//If not at back of queue then prio < currentNode.prio
+			this.head = newNode;
+			
+		} else {	//If not at back of queue or updating head then prio < currentNode.prio
 			prevNode.setNext(newNode);
 			newNode.setPrev(prevNode);
 			
@@ -126,5 +135,45 @@ public class SimpleQueuePrio<Item> {
 		
 		currentNode.setNext(newNode);
 		newNode.setPrev(currentNode);
+	}
+	
+	
+	/*Updates the priority of an item in the queue*/
+	public int update(Item value, float prio) {
+		if (this.head == null) { return -1; }
+		
+		Node<Item> currentNode = this.head;
+		
+		while (currentNode != null && currentNode.getVal() != value) {
+			currentNode = currentNode.getNext();
+		}
+		
+		if (currentNode == null) {
+			return -1;
+			
+		} else if (currentNode.getVal() == value && prio < currentNode.getPrio()) {	//Remove currentNode from queue if its priority is higher than new priority
+			/*Update next and prev pointers if they exists*/
+			Node<Item> prevNode = currentNode.getPrev();
+			Node<Item> nextNode = currentNode.getNext();
+			
+			if (prevNode != null) {
+				prevNode.setNext(nextNode);
+			}
+			
+			if (nextNode != null) {
+				nextNode.setPrev(prevNode);
+			}
+			
+			currentNode.setNext(null);
+			currentNode.setPrev(null);
+			
+			this.insert(value, prio);	//Reinsert item into the queue with new priority
+			
+			return 1;
+			
+		} else {
+			return 0;
+			
+		}
 	}
 }

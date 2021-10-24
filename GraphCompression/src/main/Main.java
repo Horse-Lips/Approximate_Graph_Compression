@@ -9,15 +9,23 @@ import graphUtils.General;
 public class Main {
 	public static void main(String[] args) throws IOException {
 		String file1,     file2;
-		Graph  G1,        G2,      G3;
-		long   startTime, endTime;
 		
 		file1 = "C:/Users/CallM/Documents/Life/UniGlasgow/Year4/Project/Code/exampleGraph1.txt";
 		file2 = "C:/Users/CallM/Documents/Life/UniGlasgow/Year4/Project/Code/exampleGraph2.txt";
 		
-		G1 = General.fromFile(file1);
-		G2 = General.fromFile(file1);
-		G3 = General.fromFile(file1);
+		Graph G = General.fromFile(file1);
+		
+		int end = 6;
+		G.dijkstra(0, end);
+		
+		System.out.println(G.getVertex(end).getPathLength());
+		
+		
+		/*Graph G1 = General.fromFile(file1);
+		Graph G2 = General.fromFile(file1);
+		Graph G3 = General.fromFile(file1);
+		
+		long   startTime, endTime;
 		
 		System.out.println("Example Graph 1 (Small Graph)");
 		
@@ -95,6 +103,6 @@ public class Main {
 		}
 		endTime = System.nanoTime();
 		
-		System.out.println("Non-deterministic Vertex sparsification time: " + (endTime - startTime));
+		System.out.println("Non-deterministic Vertex sparsification time: " + (endTime - startTime));*/
 	}
 }

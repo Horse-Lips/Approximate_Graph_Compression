@@ -1,6 +1,8 @@
 package graphComponents;
 
 import java.util.ArrayList;
+import graphUtils.SimpleQueuePrio;
+
 
 /*Graph class, maintains a list of Vertices (See Vertex class)*/
 public class Graph {
@@ -212,7 +214,61 @@ public class Graph {
 	
 	/*Implementation of Dijkstra's algorithm using a priority queue*/
 	public void dijkstra(int startIndex, int endIndex) {
+		for (Vertex v: this.vertList) {	//Set all vertices as unvisited, not in queue, with path length of 0
+			v.setVisited(false);
+			v.setQueueStatus(false);
+			v.setPathLength(0);
+		}
 		
+		Vertex startVert = this.getVertex(startIndex);
+		Vertex endVert   = this.getVertex(endIndex);
+		
+		if (startVert == null || endVert == null) { return; }	//Return as neither start nor end are in the Graph
+		
+		
+		SimpleQueuePrio<Vertex> prioQ = new SimpleQueuePrio<Vertex>();	//Priority queue
+		
+		prioQ.insert(startVert, 0);	//Add startVert to queue with 0 prio
+		startVert.setQueueStatus(true);
+		
+		Vertex currentVertex;	//Vertex currently being processed
+		
+		while ((currentVertex = prioQ.pop()) != null) {
+			currentVertex.setVisited(true);	//Set node as visited
+			
+			if (currentVertex.getIndex() == endIndex) {	//currentVertex is the end Vertex so return
+				return;
+			}
+			
+			ArrayList<AdjNode> currentNeighbours = currentVertex.getAdj();	//Get current Node's neighbours
+			
+			for (AdjNode neighbour: currentNeighbours) {
+				Vertex neighbourVertex = neighbour.getVert();	//Get vertex representation of neighbour
+				float pathWeight = currentVertex.getPathLength() + neighbour.getWeight();	//Calculate total path weight through currentVertex to neighbourVertex
+				
+				if (!neighbourVertex.getVisited()) {	//Make sure neighbour hasn't been processed
+					
+					if (!neighbourVertex.getQueueStatus()) {	//If neighbour not in queue then add it
+						neighbourVertex.setParent(currentVertex);	//Set currentNode as neighbour's parent
+						prioQ.insert(neighbourVertex, pathWeight);
+						
+						neighbourVertex.setQueueStatus(true);	//Indicate that the Vertex is in the queue
+						neighbourVertex.setPathLength(pathWeight);
+						
+					} else {
+						int success = prioQ.update(neighbourVertex, pathWeight);
+						
+						if (success == 1) {	//If an update was made, update the parent as this was a shorter path
+							neighbourVertex.setParent(currentVertex);
+							neighbourVertex.setPathLength(pathWeight);
+							
+						}
+						
+					}
+					
+				}
+			}
+		}
 	}
 	
 	

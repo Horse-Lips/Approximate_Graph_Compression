@@ -12,7 +12,11 @@ public class Vertex {
 	private Vertex parent;			//Parent of Vertex (e.g. in shortest path)
 	
 	private double totalEdgeWeight; //Sum of the edge weights of all edges containing this Vertex (Weights added in addToAdj method)
-
+	
+	private boolean visited;		//Used to check if Vertex visited in shortest path algorithm
+	private boolean inQueue;		//Used to check if Vertex in priority queue (may need to update priority) during shortest path algorithm
+	private float currentPathLength;	//Length of shortest path to this Vertex
+	
 	public Vertex(int index) {
 		this.index = index;
 		this.adjList = new ArrayList<AdjNode>();
@@ -20,6 +24,10 @@ public class Vertex {
 		this.parent = null;
 		
 		this.totalEdgeWeight = 0;
+		
+		this.visited = false;
+		this.inQueue = false;
+		this.currentPathLength = 0;
 	}
 	
 	
@@ -85,9 +93,46 @@ public class Vertex {
 	}
 	
 	
+	/*Returns the value of visited*/
+	public boolean getVisited() {
+		return this.visited;
+	}
+	
+	
+	/*Updates the value of visited*/
+	public void setVisited(boolean b) {
+		this.visited = b;
+	}
+	
+	
+	/*Returns the value of inQueue*/
+	public boolean getQueueStatus() {
+		return this.inQueue;
+	}
+	
+	
+	/*Updates the value of inQueue*/
+	public void setQueueStatus(boolean b) {
+		this.inQueue = b;
+	}
+	
+	
+	/*Returns current shortest path length*/
+	public float getPathLength() {
+		return this.currentPathLength;
+	}
+	
+	
+	/*Updates current path length*/
+	public void setPathLength(float l) {
+		this.currentPathLength = l;
+	}
+	
+	
 	public String toString() {
 		String retString = "Vertex Object: \nIndex: " + this.getIndex() + "\nDegree: " + this.adjList.size() + "\nParent Index: " + this.getParent().getIndex();
 		
 		return retString;
 	}
+	
 }
