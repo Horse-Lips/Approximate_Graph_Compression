@@ -148,9 +148,6 @@ public class Graph {
 		
 		while ((currentVert = nonTermQueue.pop()) != null) {	//While there are non-terminals to contract, contract them
 			contractionMethod.accept(currentVert.getIndex());
-			
-			System.out.println("Contracted " + currentVert.getVal());
-			System.out.println(this);
 		}
 	}
 	
