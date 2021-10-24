@@ -18,9 +18,9 @@ public class Graph {
 	
 	
 	/*Returns the Vertex with the given ID*/
-	public Vertex getVertex(int ID) {
+	public Vertex getVertex(int index) {
 		for (Vertex v: this.vertList) {
-			if (ID == v.getID()) {
+			if (index == v.getIndex()) {
 				return v;
 			}
 		}
@@ -36,8 +36,8 @@ public class Graph {
 	
 	
 	/*Removes the Vertex at index i and resizes the graph*/
-	public void removeVertex(int vertID) {
-		Vertex toRemove = this.getVertex(vertID);
+	public void removeVertex(int vertIndex) {
+		Vertex toRemove = this.getVertex(vertIndex);
 		
 		if (toRemove == null) { return; }
 		
@@ -47,7 +47,7 @@ public class Graph {
 		for (Vertex v: this.vertList) {
 			if (v != toRemove) {
 				newVertList[currentIndex] = v;
-				v.setID(currentIndex);
+				v.setIndex(currentIndex);
 				
 				currentIndex++;
 			}
@@ -224,7 +224,7 @@ public class Graph {
 				}
 				
 				for (AdjNode currentAdj: currentVertex.getAdj()) {
-					currentLine[currentAdj.getVert().getID()] = Float.toString(currentAdj.getWeight());
+					currentLine[currentAdj.getVert().getIndex()] = Float.toString(currentAdj.getWeight());
 				}
 				
 				retString += String.join(" ", currentLine) + "\n";
