@@ -12,7 +12,7 @@
 * **Set up basic data structures and tools such as github etc**
 * **Begin implementing algorithms to be analysed**
 * **Implement Dijkstra's algorithm, min-degree heuristic, priority queue, research alias method**
-* **Week 6**
+* **Research alias method, ensure sparsifiers are correct and learn to assess quality**
 * **Week 7**
 * **Week 8**
 * **Week 9**

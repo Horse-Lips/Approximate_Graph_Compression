@@ -49,3 +49,6 @@
 
 ### 19/10/2021
 * *0.5 Hours* Implemented priority/FIFO queue data structure
+
+### 24/10/2021
+* *3.3 Hours* Fixed issues with priority queue, implemented Dijkstra's algorithm, implemented min-degree heuristic for contracting nonterminals, ran tests and visualised graphs using diagrams
