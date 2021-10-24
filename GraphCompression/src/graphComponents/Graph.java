@@ -214,8 +214,9 @@ public class Graph {
 	
 	/*Implementation of Dijkstra's algorithm using a priority queue*/
 	public void dijkstra(int startIndex, int endIndex) {
-		for (Vertex v: this.vertList) {	//Set all vertices as unvisited, not in queue, with path length of 0
+		for (Vertex v: this.vertList) {	//Set all vertices as unvisited, non-terminal, not in queue, with path length of 0
 			v.setVisited(false);
+			v.setTerminal(false);
 			v.setQueueStatus(false);
 			v.setPathLength(0);
 		}
@@ -236,7 +237,14 @@ public class Graph {
 		while ((currentVertex = prioQ.pop()) != null) {
 			currentVertex.setVisited(true);	//Set node as visited
 			
-			if (currentVertex.getIndex() == endIndex) {	//currentVertex is the end Vertex so return
+			if (currentVertex.getIndex() == endIndex) {	//currentVertex is the end Vertex
+				Vertex currentTerminal = currentVertex;
+				
+				while (currentTerminal != null) {	//Set all vertices in path as terminals
+					currentTerminal.setTerminal(true);
+					currentTerminal = currentTerminal.getParent();
+				}
+				
 				return;
 			}
 			

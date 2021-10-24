@@ -13,9 +13,11 @@ public class Vertex {
 	
 	private double totalEdgeWeight; //Sum of the edge weights of all edges containing this Vertex (Weights added in addToAdj method)
 	
-	private boolean visited;		//Used to check if Vertex visited in shortest path algorithm
-	private boolean inQueue;		//Used to check if Vertex in priority queue (may need to update priority) during shortest path algorithm
+	private boolean visited;			//Used to check if Vertex visited in shortest path algorithm
+	private boolean inQueue;			//Used to check if Vertex in priority queue (may need to update priority) during shortest path algorithm
 	private float currentPathLength;	//Length of shortest path to this Vertex
+	
+	private boolean terminal;	//Indicates whether or not this Vertex is a terminal
 	
 	public Vertex(int index) {
 		this.index = index;
@@ -28,6 +30,8 @@ public class Vertex {
 		this.visited = false;
 		this.inQueue = false;
 		this.currentPathLength = 0;
+		
+		this.terminal = false;
 	}
 	
 	
@@ -126,6 +130,18 @@ public class Vertex {
 	/*Updates current path length*/
 	public void setPathLength(float l) {
 		this.currentPathLength = l;
+	}
+	
+	
+	/*Returns whether or not this Vertex is a terminal*/
+	public boolean getTerminal() {
+		return this.terminal;
+	}
+	
+	
+	/*Updates the value of this.terminal*/
+	public void setTerminal(boolean b) {
+		this.terminal = b;
 	}
 	
 	
