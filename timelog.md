@@ -53,3 +53,5 @@
 ### 24/10/2021
 * *3.3 Hours* Fixed issues with priority queue, implemented Dijkstra's algorithm, implemented min-degree heuristic for contracting nonterminals, ran tests and visualised graphs using diagrams
 * *0.5 Hours* Created simple graph generation script
+* *0.5 Hours* Researched Alias method of sampling from a discrete distribution
+* *2.5 Hours* Implemented edge sampling using alias method for edge contractions, rewrote contract function, create new 3-tuple class

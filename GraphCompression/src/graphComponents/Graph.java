@@ -1,7 +1,6 @@
 package graphComponents;
 
 import java.util.ArrayList;
-import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 
 import graphUtils.SimpleQueuePrio;
@@ -80,7 +79,7 @@ public class Graph {
 				AdjNode n2ToRemove = null;	//Edge containing toRemove to be deleted
 				
 				if (n1Vertex != n2Vertex && n1Vertex != toRemove && n2Vertex != toRemove) {
-					float newWeight = n1Adj.getWeight() + n2Adj.getWeight();	//Calculate the new weight of the path through the vertex to delete
+					double newWeight = n1Adj.getWeight() + n2Adj.getWeight();	//Calculate the new weight of the path through the vertex to delete
 					boolean noEdge  = true;		//Used to check if there was an existing edge between neighbourOne and neighbourTwo
 					
 					for (AdjNode n1Neighbour: n1Vertex.getAdj()) {	//Iterate over neighbourOne's neighbours
@@ -130,17 +129,27 @@ public class Graph {
 	
 	/*Carries out Vertex sparsification using minimum degree heuristic, contraction method defaults to Vertex sparsification method*/
 	public void sparsify(String method) {
-		Consumer<Integer> contractionMethod = this::contract;	//Default to use contract
-		
-		if (method == "gauss") {
-			contractionMethod = this::Gauss;	//Use Gauss if specified
-		}
-		
 		SimpleQueuePrio<Vertex> nonTermQueue = new SimpleQueuePrio<Vertex>();	//Queue containing all nonterminals, priority is degree using lower priorities
 		
 		for (Vertex v: this.vertList) {
 			if (!v.getTerminal()) {
 				nonTermQueue.insert(v, v.getAdj().size());	//Degree calculated using size of adjacency list since undirected (or symmetric directed)
+			}
+		}
+		
+		Consumer<Integer> contractionMethod;
+		
+		if (method == "gauss") {
+			contractionMethod = this::Gauss;	//Use Gauss if specified
+			
+		} else {
+			contractionMethod = this::contract;	//Default to random edge contraction
+			
+			/*Pre-processing step*/
+			for (Vertex v: this.vertList) {
+				if (!v.getTerminal() && !v.getPartitioned()) {
+					v.partition();	//IMPORTANT - Partition vertices into boxes for alias method discrete sampling
+				}
 			}
 		}
 		
@@ -154,84 +163,66 @@ public class Graph {
 	
 	/*Contracts the edge between the nodes with IDs "toRemoveID" and "superNodeID"*/
 	public int contract(int toRemoveIndex) {
-		Vertex toRemove  = this.getVertex(toRemoveIndex);
+		Vertex toRemove = this.getVertex(toRemoveIndex);
 		
-		if (toRemove == null) { return -1; } //Check that vertex to be removed is actually in the graph
-		/*
-		 * The following selects an edge to contract, or alternatively selects the Vertex that will absorb "toRemove" using the probability of the edge
-		 * The probability of the edge is the weight of the edge divided by the sum of all edge weights containing the Vertex
-		 * The sum of all edge weights is calculated when adding edges to a Vertex in order to save time and is retrieved using v.getTotWeight() for some Vertex v
-		*/
-		double randProb  = Math.random();
-		double cumSum    = 0;
-		
-		float removedEdgeWeight = 0;	//The weight of the edge being contracted, used for addition to existing edges later
-		
-		AdjNode edgeToContract = null;
-		
-		for (AdjNode adj: toRemove.getAdj()) {
-			double currentProb = adj.getWeight() / toRemove.getTotWeight();	//Calculate current edge's probability
-			cumSum += currentProb;
+		if (toRemove == null) { //Check that vertex to be removed is actually in the graph
+			return -1; 
 			
-			if (cumSum >= randProb) {	//If the cumsum exceeds the probability then we have selected an edge
-				edgeToContract = adj;
-				removedEdgeWeight = adj.getWeight();
-				
-				break;
-			}
+		} else if (!toRemove.getPartitioned()) {	//Also check if Vertex needs to be partitioned after adding/removing an edge
+			toRemove.partition();
+			
 		}
 		
-		if (edgeToContract == null) {	//Something has failed and we were unable to select an edge to contract
-			return -2;
-		}
+		/*Using alias method*/
+		AdjNode edgeToContract = toRemove.sample();	//Get edge to contract
+		double removedEdgeWeight = edgeToContract.getWeight();	//Get weight of contracted edge for addition to existing edges
+		toRemove.removeFromAdj(edgeToContract);	//Remove edge
 		
+		Vertex superNode = edgeToContract.getVert();	//Get new supernode (two merged vertices)
 		
-		Vertex superNode = edgeToContract.getVert();	//The supernode after edge contraction has been performed
 		
 		/*The following removes the edge between superNode and toRemove*/
 		AdjNode removeFromSuper = null;
 		
-		for (AdjNode adjSuper: superNode.getAdj()) {
-			if (adjSuper.getVert() == toRemove) {
-				removeFromSuper = adjSuper;
+		for (AdjNode superNeighbour: superNode.getAdj()) {
+			if (superNeighbour.getVert().getIndex() == toRemove.getIndex()) {
+				removeFromSuper = superNeighbour;
 			}
 		}
 		
 		superNode.removeFromAdj(removeFromSuper);
 		
 		
-		for (AdjNode removeNeighbourAdj: toRemove.getAdj()) {	//Iterate over toRemove's neighbours
-			if (removeNeighbourAdj != edgeToContract) {
-				Vertex removeNeighbourVert = removeNeighbourAdj.getVert();					//Get Vertex representation of neighbour
-				float newEdgeWeight = removeNeighbourAdj.getWeight() + removedEdgeWeight;	//Weight of path from neighbour to superNode through toRemove
+		ArrayList<AdjNode> toRemoveNeighbours = toRemove.getAdj();
+		
+		for (AdjNode toRemoveNeighbourAdj: toRemoveNeighbours) {	//Iterate over toRemove's neighbours
+			Vertex toRemoveNeighbour = toRemoveNeighbourAdj.getVert();	//Get vertex representation of toRemove neighbour
+			
+			double newEdgeWeight = toRemoveNeighbourAdj.getWeight() + removedEdgeWeight;	//Calculate new edge weights to from neighbour to superNode through toRemove
+			
+			AdjNode edgeToToRemove = null;	//Edge from neighbour to toRemove
+			AdjNode edgeToSuperNode = null;	//Edge from neighbour to superNode if it exists
+			
+			for (AdjNode neighbour: toRemoveNeighbour.getAdj()) {	//For loop retrieves the above two edges
+				Vertex neighbourVert = neighbour.getVert();
 				
-				boolean updated = false;		//Used to check if an edge to superNode already exists
-				AdjNode edgeToToRemove = null;	//Edge containing toRemove
-				
-				for (AdjNode neighbourAdj: removeNeighbourVert.getAdj()) {	//Iterate over the neighbour's neighbours
-					if (neighbourAdj.getVert() == superNode) {	//An edge already exists to the super node
-						updated = true;	//Indicate we have made an update
-						
-						if (neighbourAdj.getWeight() > newEdgeWeight) {	//Make an update if necessary
-							neighbourAdj.setWeight(newEdgeWeight);
-						}
-						
-					} else if (neighbourAdj.getVert() == toRemove) {
-						edgeToToRemove = neighbourAdj;	//Store edge containing toRemove
-						
-					}
-				}
-				
-				if (!updated) {	//If no update was made, there is no edge containing superNode so we update the existing edge to take us to superNode "through" toRemove
-					edgeToToRemove.setVert(superNode);
-					edgeToToRemove.setWeight(newEdgeWeight);
+				if (neighbourVert.getIndex() == superNode.getIndex()) {
+					edgeToSuperNode = neighbour;
 					
-					superNode.addToAdj(removeNeighbourVert, newEdgeWeight);	//Since no edge exists, add an edge from superNode to the neighbour of toRemove
-					
-				} else {	//If an update was made then we can simply remove the edge containing toRemove
-					removeNeighbourVert.removeFromAdj(edgeToToRemove);
+				} else if (neighbourVert.getIndex() == toRemove.getIndex()) {
+					edgeToToRemove = neighbour;
 					
 				}
+			}
+			
+			if (edgeToSuperNode != null) {	//If an edge to superNode already exists, set its weight to the minimum of existing edge or new edge weight
+				edgeToSuperNode.setWeight(Math.min(edgeToSuperNode.getWeight(), newEdgeWeight));
+				toRemoveNeighbour.removeFromAdj(edgeToToRemove);	//Also remove edge to toRemove
+				
+			} else {	//Otherwise update existing edge to point to superNode with the new edge weight
+				edgeToToRemove.setVert(superNode);
+				edgeToToRemove.setWeight(newEdgeWeight);
+				
 			}
 		}
 		
@@ -281,7 +272,7 @@ public class Graph {
 			
 			for (AdjNode neighbour: currentNeighbours) {
 				Vertex neighbourVertex = neighbour.getVert();	//Get vertex representation of neighbour
-				float pathWeight = currentVertex.getPathLength() + neighbour.getWeight();	//Calculate total path weight through currentVertex to neighbourVertex
+				double pathWeight = currentVertex.getPathLength() + neighbour.getWeight();	//Calculate total path weight through currentVertex to neighbourVertex
 				
 				if (!neighbourVertex.getVisited()) {	//Make sure neighbour hasn't been processed
 					if (!neighbourVertex.getQueueStatus()) {	//If neighbour not in queue then add it
@@ -320,7 +311,7 @@ public class Graph {
 				}
 				
 				for (AdjNode currentAdj: currentVertex.getAdj()) {
-					currentLine[currentAdj.getVert().getIndex()] = Float.toString(currentAdj.getWeight());
+					currentLine[currentAdj.getVert().getIndex()] = Double.toString(currentAdj.getWeight());
 				}
 				
 				retString += String.join(" ", currentLine) + "\n";

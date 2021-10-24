@@ -5,12 +5,12 @@ public class SimpleQueuePrio<Item> {
 	
 	private static class Node<Item> {
 		private Item value;	//Value stored in the Node
-		private float prio;	//Priority of the Node in the queue
+		private double prio;	//Priority of the Node in the queue
 		
 		private Node<Item> next;	//Next node in queue
 		private Node<Item> prev;	//Prev node in queue
 		
-		public Node(Item value, float prio) {
+		public Node(Item value, double prio) {
 			this.value = value;
 			this.prio = prio;
 			
@@ -25,7 +25,7 @@ public class SimpleQueuePrio<Item> {
 		
 		
 		/*Returns the priority of this Node*/
-		public float getPrio() {
+		public double getPrio() {
 			return this.prio;
 		}
 		
@@ -81,7 +81,7 @@ public class SimpleQueuePrio<Item> {
 	
 	
 	/*Inserts an item into the queue with the given priority*/
-	public void insert(Item value, float prio) {
+	public void insert(Item value, double prio) {
 		Node<Item> newNode = new Node<Item>(value, prio);
 		
 		if (this.head == null) {	//Update head if no items in queue
@@ -139,7 +139,7 @@ public class SimpleQueuePrio<Item> {
 	
 	
 	/*Updates the priority of an item in the queue*/
-	public int update(Item value, float prio) {
+	public int update(Item value, double prio) {
 		if (this.head == null) { return -1; }
 		
 		Node<Item> currentNode = this.head;

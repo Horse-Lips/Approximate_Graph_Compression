@@ -2,6 +2,11 @@ package graphComponents;
 
 
 import java.util.ArrayList;
+import java.util.Map.Entry;
+import java.util.TreeMap;
+import java.util.concurrent.ThreadLocalRandom;
+
+import graphUtils.SimpleTuple;
 
 
 /*Vertex class used for representing Graph nodes*/
@@ -15,9 +20,12 @@ public class Vertex {
 	
 	private boolean visited;			//Used to check if Vertex visited in shortest path algorithm
 	private boolean inQueue;			//Used to check if Vertex in priority queue (may need to update priority) during shortest path algorithm
-	private float currentPathLength;	//Length of shortest path to this Vertex
+	private double currentPathLength;	//Length of shortest path to this Vertex
 	
 	private boolean terminal;	//Indicates whether or not this Vertex is a terminal
+	
+	private SimpleTuple<Double, AdjNode, AdjNode>[] partition;	//Partitions used in Alias method for discrete sampling
+	private boolean partitioned;	//Used to check if the current Vertex has been partitioned
 	
 	public Vertex(int index) {
 		this.index = index;
@@ -32,6 +40,8 @@ public class Vertex {
 		this.currentPathLength = 0;
 		
 		this.terminal = false;
+		
+		this.partitioned = false;
 	}
 	
 	
@@ -53,10 +63,11 @@ public class Vertex {
 	}
 	
 	/*Adds a vertex to the adjacency list*/
-	public void addToAdj(Vertex v, float weight) {
+	public void addToAdj(Vertex v, double weight) {
 		this.adjList.add(new AdjNode(v, weight));
-		
 		this.totalEdgeWeight += weight;	//Add weight to the cumulative edge weight
+		
+		this.partitioned = false;
 	}
 	
 	
@@ -65,6 +76,8 @@ public class Vertex {
 		if (adj != null) {	//This only occurs in certain circumstances, e.g. in Graph.Gauss when n1Adj == n2Adj
 			this.adjList.remove(adj);
 			this.totalEdgeWeight -= adj.getWeight();	//Remove weight from the cumulative edge weight
+			
+			this.partitioned = false;
 		}
 	}
 	
@@ -122,13 +135,13 @@ public class Vertex {
 	
 	
 	/*Returns current shortest path length*/
-	public float getPathLength() {
+	public double getPathLength() {
 		return this.currentPathLength;
 	}
 	
 	
 	/*Updates current path length*/
-	public void setPathLength(float l) {
+	public void setPathLength(double l) {
 		this.currentPathLength = l;
 	}
 	
@@ -142,6 +155,82 @@ public class Vertex {
 	/*Updates the value of this.terminal*/
 	public void setTerminal(boolean b) {
 		this.terminal = b;
+	}
+	
+	
+	/*Returns the boolean value of partitioned, used to check if the current vertex has been partitioned for alias method discrete sampling*/
+	public boolean getPartitioned() {
+		return this.partitioned;
+	}
+	
+	
+	/*Updates the value of this.partitioned*/
+	public void setPartitioned(boolean b) {
+		this.partitioned = b;
+	}
+	
+	
+	/*Partitions edges and probabilities into boxes for Alias method*/
+	public void partition() {
+		int boxCount = this.adjList.size();
+		
+		this.partition = new SimpleTuple[boxCount];	//Initialise partitions for this particular Vertex
+		TreeMap<Double, AdjNode> probMap = new TreeMap<Double, AdjNode>(); //Create a new AVL Tree for probabilities
+		
+		for (AdjNode neighbour: this.adjList) {
+			double currentKey = neighbour.getWeight() / this.getTotWeight();
+			
+			if (probMap.containsKey(currentKey)) {
+				currentKey += 0.000001;	//This accounts for duplicate keys with a slight change to a probability
+			}
+			
+			probMap.put(currentKey, neighbour);	//Insert all prob-AdjNode pairs into probMap
+		}
+		
+		for (int i = 0; i < boxCount; i++) {
+			Entry<Double, AdjNode> smallest = probMap.pollFirstEntry();	//Pop smallest entry from probMap
+			Entry<Double, AdjNode> largest  = probMap.pollLastEntry();	//Pop largest if it exists (It wont if there was only 1 entry as we removed smallest - the only entry)
+			
+			double leftOver = (1.0 / boxCount) - smallest.getKey();
+			
+			/*Note: here we use 0.0000000001 to account for roundoff*/
+			if (leftOver > 0.00001 && largest != null) {	//Fill any leftover space using largest prob
+				probMap.put(largest.getKey() - leftOver, largest.getValue());
+				
+				SimpleTuple<Double, AdjNode, AdjNode> box = new SimpleTuple<Double, AdjNode, AdjNode>(smallest.getKey(), smallest.getValue(), largest.getValue());	//"Fill" box
+				this.partition[i] = box;
+				
+			} else {
+				SimpleTuple<Double, AdjNode, AdjNode> box = new SimpleTuple<Double, AdjNode, AdjNode>(smallest.getKey(), smallest.getValue(), smallest.getValue());
+				this.partition[i] = box;
+				
+			}
+			
+			if (largest != null) {
+				probMap.put(largest.getKey(), largest.getValue());
+			}
+				
+				
+		}
+		
+		this.partitioned = true;
+	}
+	
+	
+	/*Sample from partition and return an edge to contract*/
+	public AdjNode sample() {
+		int randomBoxIndex = ThreadLocalRandom.current().nextInt(0, partition.length);	//Choose random box
+		SimpleTuple<Double, AdjNode, AdjNode> box = partition[randomBoxIndex];
+		
+		double randProb = Math.random() / this.partition.length;	//Generate a random number between 0 and 1 inclusive and divide by box count
+		
+		if (randProb <= box.getFirst()) {
+			return box.getSecond();
+			
+		} else {
+			return box.getThird();
+			
+		}
 	}
 	
 	
