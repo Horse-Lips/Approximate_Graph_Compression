@@ -247,7 +247,6 @@ public class Graph {
 				float pathWeight = currentVertex.getPathLength() + neighbour.getWeight();	//Calculate total path weight through currentVertex to neighbourVertex
 				
 				if (!neighbourVertex.getVisited()) {	//Make sure neighbour hasn't been processed
-					
 					if (!neighbourVertex.getQueueStatus()) {	//If neighbour not in queue then add it
 						neighbourVertex.setParent(currentVertex);	//Set currentNode as neighbour's parent
 						prioQ.insert(neighbourVertex, pathWeight);
@@ -261,11 +260,9 @@ public class Graph {
 						if (success == 1) {	//If an update was made, update the parent as this was a shorter path
 							neighbourVertex.setParent(currentVertex);
 							neighbourVertex.setPathLength(pathWeight);
-							
 						}
 						
 					}
-					
 				}
 			}
 		}

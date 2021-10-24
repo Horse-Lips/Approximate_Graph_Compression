@@ -11,6 +11,7 @@ import graphComponents.Vertex;
 
 
 public class General {
+	/*Loads a graph from an adjacency matrix text file*/
 	public static Graph fromFile(String filename) throws IOException {
 		BufferedReader br = new BufferedReader(new FileReader(filename));
 		Scanner lineScanner = new Scanner(br);
@@ -38,5 +39,23 @@ public class General {
 		lineScanner.close();
 		
 		return newGraph;
+	}
+	
+	
+	/*Prints a path in Graph G*/
+	public static void printPath(Vertex end) {
+		String retString = "";
+		int vertCount = 0;
+		Vertex currentVert = end;
+		
+		while (currentVert != null) {
+			retString = "Vertex with index " + currentVert.getIndex() + "\n" + retString;
+			vertCount++;
+			currentVert = currentVert.getParent();
+		}
+		
+		retString = "Path of length " + end.getPathLength() + " found containing " + vertCount + " vertices\nPath:\n" + retString;
+		
+		System.out.println(retString);
 	}
 }

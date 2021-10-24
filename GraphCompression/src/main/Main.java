@@ -18,7 +18,7 @@ public class Main {
 		int end = 6;
 		G.dijkstra(0, end);
 		
-		System.out.println(G.getVertex(end).getPathLength());
+		General.printPath(G.getVertex(end));
 		
 		
 		/*Graph G1 = General.fromFile(file1);
