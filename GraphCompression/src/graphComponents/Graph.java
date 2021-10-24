@@ -1,6 +1,9 @@
 package graphComponents;
 
 import java.util.ArrayList;
+import java.util.function.BiConsumer;
+import java.util.function.Consumer;
+
 import graphUtils.SimpleQueuePrio;
 
 
@@ -125,8 +128,14 @@ public class Graph {
 	}
 	
 	
-	/*Carries out Vertex sparsification using minimum degree heuristic*/
-	public void sparsify() {
+	/*Carries out Vertex sparsification using minimum degree heuristic, contraction method defaults to Vertex sparsification method*/
+	public void sparsify(String method) {
+		Consumer<Integer> contractionMethod = this::contract;	//Default to use contract
+		
+		if (method == "gauss") {
+			contractionMethod = this::Gauss;	//Use Gauss if specified
+		}
+		
 		SimpleQueuePrio<Vertex> nonTermQueue = new SimpleQueuePrio<Vertex>();	//Queue containing all nonterminals, priority is degree using lower priorities
 		
 		for (Vertex v: this.vertList) {
@@ -138,10 +147,10 @@ public class Graph {
 		Vertex currentVert;
 		
 		while ((currentVert = nonTermQueue.pop()) != null) {	//While there are non-terminals to contract, contract them
-			int success = contract(currentVert.getIndex());
+			contractionMethod.accept(currentVert.getIndex());
 			
-			//System.out.println("Contracted " + currentVert.getVal() + " with output " + success);
-			//System.out.println(this);
+			System.out.println("Contracted " + currentVert.getVal());
+			System.out.println(this);
 		}
 	}
 	

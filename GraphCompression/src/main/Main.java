@@ -14,6 +14,7 @@ public class Main {
 		file1 = "C:/Users/CallM/Documents/Life/UniGlasgow/Year4/Project/Code/exampleGraph1.txt";
 		file2 = "C:/Users/CallM/Documents/Life/UniGlasgow/Year4/Project/Code/exampleGraph2.txt";
 		
+		file1 = "C:/Users/CallM/Documents/Life/UniGlasgow/Year4/Project/Code/test.txt";
 		Graph G = General.fromFile(file1);
 		
 		/*FOR TESTING - set value of Vertices to A, B, C, etc...*/
@@ -29,7 +30,7 @@ public class Main {
 		General.printPath(G.getVertex(end));
 		
 		System.out.println(G);
-		G.sparsify();
+		G.sparsify("gauss");
 		
 		/*FOR TESTING*/
 		
