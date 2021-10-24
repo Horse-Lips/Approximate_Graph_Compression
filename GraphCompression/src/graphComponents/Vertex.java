@@ -13,8 +13,13 @@ public class Vertex {
 	
 	private double totalEdgeWeight; //Sum of the edge weights of all edges containing this Vertex (Weights added in addToAdj method)
 	
+<<<<<<< HEAD
 	public Vertex(int index) {
 		this.index = index;
+=======
+	public Vertex(int id) {
+		this.index = id;
+>>>>>>> 5ca41d6e2cb2309fa51073860f844bcbc1fe650b
 		this.adjList = new ArrayList<AdjNode>();
 		this.value = 0;
 		this.parent = null;
@@ -30,8 +35,13 @@ public class Vertex {
 	
 	
 	/*Updates the ID of the Vertex*/
+<<<<<<< HEAD
 	public void setIndex(int index) {
 		this.index = index;
+=======
+	public void setIndex(int ID) {
+		this.index = ID;
+>>>>>>> 5ca41d6e2cb2309fa51073860f844bcbc1fe650b
 	}
 	
 	

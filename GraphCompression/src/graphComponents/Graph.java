@@ -59,8 +59,8 @@ public class Graph {
 	
 	
 	/*Removes a Vertex using the Gaussian Elimination method*/
-	public void Gauss(int vertID) {
-		Vertex toRemove = this.getVertex(vertID);	//Retrieve Vertex to remove using ID
+	public void Gauss(int vertIndex) {
+		Vertex toRemove = this.getVertex(vertIndex);	//Retrieve Vertex to remove using ID
 		
 		if (toRemove == null) { return; }	//Make sure Vertex to be removed is actually in the graph
 		
@@ -119,13 +119,13 @@ public class Graph {
 			n1Vertex.removeFromAdj(n1ToRemove);
 		}
 		
-		this.removeVertex(vertID);	//Finally, remove the vertex to be removed from the graph
+		this.removeVertex(vertIndex);	//Finally, remove the vertex to be removed from the graph
 	}
 	
 	
 	/*Contracts the edge between the nodes with IDs "toRemoveID" and "superNodeID"*/
-	public void contract(int toRemoveID) {
-		Vertex toRemove  = this.getVertex(toRemoveID);
+	public void contract(int toRemoveIndex) {
+		Vertex toRemove  = this.getVertex(toRemoveIndex);
 		
 		if (toRemove == null) { return; } //Check that vertex to be removed is actually in the graph
 		/*
@@ -206,7 +206,7 @@ public class Graph {
 			}
 		}
 		
-		this.removeVertex(toRemoveID); //Then we remove toRemove from the Graph
+		this.removeVertex(toRemoveIndex); //Then we remove toRemove from the Graph
 	}
 	
 	
