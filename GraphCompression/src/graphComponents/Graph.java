@@ -145,12 +145,6 @@ public class Graph {
 		} else {
 			contractionMethod = this::contract;	//Default to random edge contraction
 			
-			/*Pre-processing step*/
-			for (Vertex v: this.vertList) {
-				if (!v.getTerminal() && !v.getPartitioned()) {
-					v.partition();	//IMPORTANT - Partition vertices into boxes for alias method discrete sampling
-				}
-			}
 		}
 		
 		Vertex currentVert;

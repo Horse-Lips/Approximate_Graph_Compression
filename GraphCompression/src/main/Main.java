@@ -45,7 +45,7 @@ public class Main {
 		G1.dijkstra(0, 19);
 		G2.dijkstra(0, 19);
 		
-		System.out.println("Example Graph 2 (Large Graph)");
+		System.out.println("Example Graph 2 (Medium Graph)");
 		
 		startTime = System.nanoTime();
 		G1.sparsify("gauss");
@@ -71,7 +71,7 @@ public class Main {
 		G1.dijkstra(0, 63);
 		G2.dijkstra(0, 63);
 		
-		System.out.println("Example Graph 3 (Very Large Graph)");
+		System.out.println("Example Graph 3 (Large Graph)");
 		
 		startTime = System.nanoTime();
 		G1.sparsify("gauss");
