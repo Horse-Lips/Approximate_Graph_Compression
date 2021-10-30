@@ -159,65 +159,45 @@ public class Graph {
 	public int contract(int toRemoveIndex) {
 		Vertex toRemove = this.getVertex(toRemoveIndex);
 		
-		if (toRemove == null) { //Check that vertex to be removed is actually in the graph
-			return -1; 
-			
-		} else if (!toRemove.getPartitioned()) {	//Also check if Vertex needs to be partitioned after adding/removing an edge
-			toRemove.partition();
-			
-		}
+		if (toRemove == null) { return -1; }	//Check that vertex to be removed is actually in the graph
+		
 		
 		/*Using alias method*/
-		AdjNode edgeToContract = toRemove.sample();	//Get edge to contract
-		double removedEdgeWeight = edgeToContract.getWeight();	//Get weight of contracted edge for addition to existing edges
-		toRemove.removeFromAdj(edgeToContract);	//Remove edge
+		toRemove.partition();	//Partition Vertex edges for efficient sampling
 		
-		Vertex superNode = edgeToContract.getVert();	//Get new supernode (two merged vertices)
+		AdjNode toRemoveToSuper = toRemove.sample();	//Get edge to contract
 		
+		Vertex superNode = toRemoveToSuper.getVert();	//Get new supernode (two merged vertices)
+		AdjNode superNodeToToRemove = superNode.getFromAdj(toRemove);	//Edge between superNode and toRemove
 		
-		/*The following removes the edge between superNode and toRemove*/
-		AdjNode removeFromSuper = null;
-		
-		for (AdjNode superNeighbour: superNode.getAdj()) {
-			if (superNeighbour.getVert().getIndex() == toRemove.getIndex()) {
-				removeFromSuper = superNeighbour;
-			}
-		}
-		
-		superNode.removeFromAdj(removeFromSuper);
+		superNode.removeFromAdj(superNodeToToRemove);	//Remove contracted edge from respective adj lists
+		toRemove.removeFromAdj(toRemoveToSuper);
 		
 		
 		ArrayList<AdjNode> toRemoveNeighbours = toRemove.getAdj();
 		
-		for (AdjNode toRemoveNeighbourAdj: toRemoveNeighbours) {	//Iterate over toRemove's neighbours
+		for (AdjNode toRemoveNeighbourAdj: toRemoveNeighbours) {	//Iterate over toRemove's remaining neighbours
 			Vertex toRemoveNeighbour = toRemoveNeighbourAdj.getVert();	//Get vertex representation of toRemove neighbour
+			double newEdgeWeight = toRemoveNeighbourAdj.getWeight() + toRemoveToSuper.getWeight();	//Calculate new edge weights to from neighbour to superNode through toRemove
 			
-			double newEdgeWeight = toRemoveNeighbourAdj.getWeight() + removedEdgeWeight;	//Calculate new edge weights to from neighbour to superNode through toRemove
+			AdjNode neighbourToToRemove  = toRemoveNeighbour.getFromAdj(toRemove);	//Edge from neighbour to toRemove
+			AdjNode neighbourToSuperNode = toRemoveNeighbour.getFromAdj(superNode);	//Edge from neighbour to superNode if it exists
 			
-			AdjNode edgeToToRemove = null;	//Edge from neighbour to toRemove
-			AdjNode edgeToSuperNode = null;	//Edge from neighbour to superNode if it exists
-			
-			for (AdjNode neighbour: toRemoveNeighbour.getAdj()) {	//For loop retrieves the above two edges
-				Vertex neighbourVert = neighbour.getVert();
+			if (neighbourToSuperNode != null)  {	//An edge between toRemove's neighbour and superNode already exists
+				AdjNode superNodeToNeighbour = superNode.getFromAdj(toRemoveNeighbour);	//Get same edge from the "other end"
 				
-				if (neighbourVert.getIndex() == superNode.getIndex()) {
-					edgeToSuperNode = neighbour;
-					
-				} else if (neighbourVert.getIndex() == toRemove.getIndex()) {
-					edgeToToRemove = neighbour;
-					
-				}
+				neighbourToSuperNode.setWeight(Math.min(neighbourToSuperNode.getWeight(), toRemoveToSuper.getWeight()));	//set its weight to the minimum of existing edge or new edge weight through toRemove
+				superNodeToNeighbour.setWeight(Math.min(neighbourToSuperNode.getWeight(), toRemoveToSuper.getWeight()));
+				
+				toRemoveNeighbour.removeFromAdj(neighbourToToRemove);	//Remove edge between toRemove and neighbour
+				
+			} else {	//Otherwise create a new edge
+				neighbourToToRemove.setVert(superNode);			//Update vertex and weight of existing edge for efficiency
+				neighbourToToRemove.setWeight(newEdgeWeight);
+				
+				superNode.addToAdj(toRemoveNeighbour, newEdgeWeight);	//Create a new edge from superNode to neighbour
 			}
 			
-			if (edgeToSuperNode != null) {	//If an edge to superNode already exists, set its weight to the minimum of existing edge or new edge weight
-				edgeToSuperNode.setWeight(Math.min(edgeToSuperNode.getWeight(), newEdgeWeight));
-				toRemoveNeighbour.removeFromAdj(edgeToToRemove);	//Also remove edge to toRemove
-				
-			} else {	//Otherwise update existing edge to point to superNode with the new edge weight
-				edgeToToRemove.setVert(superNode);
-				edgeToToRemove.setWeight(newEdgeWeight);
-				
-			}
 		}
 		
 		this.removeVertex(toRemoveIndex); //Then we remove toRemove from the Graph
@@ -252,13 +232,6 @@ public class Graph {
 			currentVertex.setVisited(true);	//Set node as visited
 			
 			if (currentVertex.getIndex() == endIndex) {	//currentVertex is the end Vertex
-				Vertex currentTerminal = currentVertex;
-				
-				while (currentTerminal != null) {	//Set all vertices in path as terminals
-					currentTerminal.setTerminal(true);
-					currentTerminal = currentTerminal.getParent();
-				}
-				
 				return;
 			}
 			
@@ -286,6 +259,25 @@ public class Graph {
 						
 					}
 				}
+			}
+		}
+	}
+	
+	
+	/*Set n random vertices as terminals, mustHave specifies vertices that MUST be terminals*/
+	public void randomTerminals(int n, int[] mustHave) {
+		for (int i: mustHave) {
+			this.getVertex(i).setTerminal(true);	//Set all mustHaves as terminals
+			n--;
+		}
+		
+		while (n > 0) {
+			int randIndex = (int) Math.random() * this.vertCount;	//Select random terminal index
+			Vertex currentVert = this.getVertex(randIndex);
+			
+			if (!currentVert.getTerminal()) {	//If Vertex is not already a terminal, make it a terminal
+				currentVert.setTerminal(true);
+				n--;
 			}
 		}
 	}

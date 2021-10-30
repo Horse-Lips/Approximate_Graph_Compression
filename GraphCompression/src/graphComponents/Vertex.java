@@ -82,8 +82,21 @@ public class Vertex {
 	}
 	
 	
+	/*Returns the edge or AdjNode to a specified Vertex*/
+	public AdjNode getFromAdj(Vertex end) {
+		for (AdjNode neighbour: this.adjList) {
+			if (neighbour.getVert().getIndex() == end.getIndex()) {
+				return neighbour;
+			}
+		}
+		
+		return null;
+	}
+	
+	
+	
 	/*Returns the value of the Vertex*/
-	public String getVal() {
+ 	public String getVal() {
 		return this.value;
 	}
 	
@@ -172,6 +185,10 @@ public class Vertex {
 	
 	/*Partitions edges and probabilities into boxes for Alias method*/
 	public void partition() {
+		if (this.partitioned) {	//Don't partition if it's not needed
+			return;
+		}
+		
 		int boxCount = this.adjList.size();
 		
 		this.partition = new SimpleTuple[boxCount];	//Initialise partitions for this particular Vertex
@@ -180,7 +197,7 @@ public class Vertex {
 		for (AdjNode neighbour: this.adjList) {
 			double currentKey = neighbour.getWeight() / this.getTotWeight();
 			
-			if (probMap.containsKey(currentKey)) {
+			while (probMap.containsKey(currentKey)) {
 				currentKey += 0.000001;	//This accounts for duplicate keys with a slight change to a probability
 			}
 			

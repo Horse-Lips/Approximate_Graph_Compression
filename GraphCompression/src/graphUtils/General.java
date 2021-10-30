@@ -26,9 +26,9 @@ public class General {
 			
 			for (int neighbIndex = 0; neighbIndex < chars.length; neighbIndex++) {	//Iterate over neighbouring vertices
 				Vertex currentVertex = newGraph.getVertex(vertIndex);
-				Float edgeWeight = Float.valueOf(chars[neighbIndex]);
+				double edgeWeight = Double.valueOf(chars[neighbIndex]);
 				
-				if (edgeWeight > 0.0) {
+				if (edgeWeight > 0) {
 					currentVertex.addToAdj(newGraph.getVertex(neighbIndex), edgeWeight);
 				}
 			}

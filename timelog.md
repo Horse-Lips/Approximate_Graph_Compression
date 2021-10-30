@@ -55,3 +55,7 @@
 * *0.5 Hours* Created simple graph generation script
 * *0.5 Hours* Researched Alias method of sampling from a discrete distribution
 * *2.5 Hours* Implemented edge sampling using alias method for edge contractions, rewrote contract function, create new 3-tuple class
+
+## Week 6
+### 30/10/2021
+* *2 Hours* Fixed issues with contract method, see issue 19 on git. Began implementing random terminal selection for quality checks

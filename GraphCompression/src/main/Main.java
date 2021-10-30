@@ -4,6 +4,7 @@ package main;
 import java.io.IOException;
 
 import graphComponents.Graph;
+import graphComponents.Vertex;
 import graphUtils.General;
 
 
@@ -25,13 +26,13 @@ public class Main {
 		G1.sparsify("gauss");
 		endTime = System.nanoTime();
 		
-		System.out.println("Gaussian time: " + (endTime - startTime));
+		System.out.println("Gaussian time: " + ((endTime - startTime) / 1000000000.0) + "s");
 		
 		startTime = System.nanoTime();
 		G2.sparsify("");
 		endTime = System.nanoTime();
 		
-		System.out.println("Vertex sparsification time: " + (endTime - startTime));
+		System.out.println("Vertex sparsification time: " + ((endTime - startTime) / 1000000000.0) + "s");
 		
 		
 		System.out.println("\n");
@@ -51,13 +52,13 @@ public class Main {
 		G1.sparsify("gauss");
 		endTime = System.nanoTime();
 		
-		System.out.println("Gaussian time: " + (endTime - startTime));
+		System.out.println("Gaussian time: " + ((endTime - startTime) / 1000000000.0) + "s");
 		
 		startTime = System.nanoTime();
 		G2.sparsify("");
 		endTime = System.nanoTime();
 		
-		System.out.println("Vertex sparsification time: " + (endTime - startTime));
+		System.out.println("Vertex sparsification time: " + ((endTime - startTime) / 1000000000.0) + "s");
 		
 		
 		System.out.println("\n");
@@ -77,12 +78,12 @@ public class Main {
 		G1.sparsify("gauss");
 		endTime = System.nanoTime();
 		
-		System.out.println("Gaussian time: " + (endTime - startTime));
+		System.out.println("Gaussian time: " + ((endTime - startTime) / 1000000000.0) + "s");
 		
 		startTime = System.nanoTime();
 		G2.sparsify("");
 		endTime = System.nanoTime();
 		
-		System.out.println("Vertex sparsification time: " + (endTime - startTime));
+		System.out.println("Vertex sparsification time: " + ((endTime - startTime) / 1000000000.0) + "s");
 	}
 }
