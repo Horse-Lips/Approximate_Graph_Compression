@@ -60,3 +60,7 @@
 ### 30/10/2021
 * *2 Hours* Fixed issues with contract method, see issue 19 on git. Began implementing random terminal selection for quality checks
 * *2.5 Hours* Tidied up code, implemented random terminal selection, implemented basic sparsifier quality checks
+
+## Week 7
+### 01/11/2021
+* *0.5 Hours* Supervisor meeting, added issues to Git issue tracker

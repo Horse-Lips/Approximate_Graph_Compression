@@ -19,7 +19,7 @@ public class Main {
 		Graph G;
 		
 		
-		double percentTerminals = 20;	//Set % of Vertices as terminals
+		double percentTerminals = 60;	//Set % of Vertices as terminals
 		double divTerminals;
 		int    totalTerminals;			//Total amount of terminals in Graph
 		int[] mustHave = new int[2];					//Vertex indexes that must be terminals (Just start and end here)
@@ -34,7 +34,6 @@ public class Main {
 		System.out.println("Compressing small graph");
 		
 		G = General.fromFile(file1);
-		
 		endIndex = 6;
 		endVert  = G.getVertex(endIndex);
 		
@@ -43,7 +42,7 @@ public class Main {
 		System.out.println("Shortest path of length: " + originalPathLength);
 		
 		divTerminals = 100 / percentTerminals;
-		totalTerminals   = ((int) ((G.size() / divTerminals) + 1)) - mustHave.length;
+		totalTerminals   = ((int) (G.size() / divTerminals)) - mustHave.length;
 		mustHave[1]      = endIndex;
 		
 		G.randomTerminals(totalTerminals, mustHave);	//Set totalTerminals Vertices as terminals at random
@@ -53,11 +52,8 @@ public class Main {
 		endTime = System.nanoTime();
 		
 		G.dijkstra(0, endVert.getIndex());				//Re-calculate shortest path
-		System.out.println("Sparsified " + (100 - percentTerminals) + "% of vertices with quality " + (endVert.getPathLength() / originalPathLength) + " in " + (endTime - startTime) / 1000000000.0 + "s");
-		
-		System.out.println(originalPathLength);
-		System.out.println(endVert.getPathLength());
-		
+		System.out.println("Removed " + (100 - percentTerminals) + "% of vertices with quality " + (endVert.getPathLength() / originalPathLength) + " in " + (endTime - startTime) / 1000000000.0 + "s");
+		System.out.println("New shortest path lenth: " + endVert.getPathLength());
 		
 		System.out.println("\n");
 		
@@ -85,10 +81,8 @@ public class Main {
 		endTime = System.nanoTime();
 		
 		G.dijkstra(0, endVert.getIndex());				//Re-calculate shortest path
-		System.out.println("Sparsified " + (100 - percentTerminals) + "% of vertices with quality " + (endVert.getPathLength() / originalPathLength) + " in " + (endTime - startTime) / 1000000000.0 + "s");
-		
-		System.out.println(originalPathLength);
-		System.out.println(endVert.getPathLength());
+		System.out.println("Removed " + (100 - percentTerminals) + "% of vertices with quality " + (endVert.getPathLength() / originalPathLength) + " in " + (endTime - startTime) / 1000000000.0 + "s");
+		System.out.println("New shortest path lenth: " + endVert.getPathLength());
 		
 		
 		System.out.println("\n");
@@ -117,10 +111,8 @@ public class Main {
 		endTime = System.nanoTime();
 		
 		G.dijkstra(0, endVert.getIndex());				//Re-calculate shortest path
-		System.out.println("Sparsified " + (100 - percentTerminals) + "% of vertices with quality " + (endVert.getPathLength() / originalPathLength) + " in " + (endTime - startTime) / 1000000000.0 + "s");
-		
-		System.out.println(originalPathLength);
-		System.out.println(endVert.getPathLength());
+		System.out.println("Removed " + (100 - percentTerminals) + "% of vertices with quality " + (endVert.getPathLength() / originalPathLength) + " in " + (endTime - startTime) / 1000000000.0 + "s");
+		System.out.println("New shortest path lenth: " + endVert.getPathLength());
 		
 		
 		/*String file1 = "C:/Users/CallM/Documents/Life/UniGlasgow/Year4/Project/Code/exampleGraph1.txt";
