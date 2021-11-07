@@ -17,29 +17,46 @@ import graphUtils.SimpleTuple;
  * entries, where the Integer represents the index of the other Vertex 
  * and the Double represents the weight of the edge.
  * 
- * @author Jake Haakanson
- * GUID: 2407682H
+ * @author Jake Haakanson. GUID: 2407682H
  *
  */
 public class Vertex {
 	/*Standard Vertex fields*/
-	private int              index;		//Index of this Vertex in the Graph Vertex list
-	HashMap<Integer, Double> adjList;	//List of Vertices adjacent to the Vertex, or edges between this Vertex and vertices stored in AdjNodes in the list
+	/** Index of this Vertex in the Graph Vertex list */
+	private int index;
+	
+	/** HashMap of Vertices adjacent to this Vertex. Key represents the adjaceny Vertex's index and value represents the weight of the edge */
+	HashMap<Integer, Double> adjList;
 	
 	/*Fields used in shortest path algorithm*/
-	private boolean visited;			//Used to check if Vertex visited in shortest path algorithm
-	private boolean inQueue;			//Used to check if Vertex in priority queue (may need to update priority) during shortest path algorithm
-	private double  currentPathLength;	//Length of shortest path from some other Vertex to this Vertex
-	private Vertex  parent = null;		//Parent of Vertex (e.g. in shortest path)
+	/** Used to check if Vertex visited (Shortest Path) */
+	private boolean visited;
+	
+	/** Used to check if Vertex is in priority queue as priority may need updating (Shortest Path) */
+	private boolean inQueue;
+	
+	/** Length of shortest path from some starting Vertex to this Vertex (Shortest Path) */
+	private double currentPathLength;
+	
+	/** Parent of this Vertex (Shortest Path) */
+	private Vertex parent = null;
 	
 	/*Fields used in sampling edges*/
-	private double  totalEdgeWeight; 	//Cumulative sum of the edge weights of all edges containing this Vertex (Weights added in addToAdj method)
-	private boolean partitioned;		//Used to check if the current Vertex has been partitioned
-	private SimpleTuple<Double, Integer, Integer>[] partitions;	//Partitions used in Alias method for discrete sampling
+	/** Cumulative sum of all edge weights of edges incident to this Vertex (Alias Method Discrete Sampling) */
+	private double totalEdgeWeight;
+	
+	/** Used to check if this Vertex has been partitioned (Alias Method Discrete Sampling) */
+	private boolean partitioned;
+	
+	/** Partitions of edge weight probabilities for sampling (Alias Method Discrete Sampling) */
+	private SimpleTuple<Double, Integer, Integer>[] partitions;
 	
 	/*Fields used in sparsification*/
-	private boolean terminal;		//Indicates whether or not this Vertex is a terminal
-	private boolean deactivated;	//Indicates whether or not this Vertex has been "removed" from the Graph
+	/** Indicates whether or not this Vertex is a terminal (Sparsification) */
+	private boolean terminal;
+	
+	/** Indicates whether or not this Vertex has been "removed" from the Graph (Sparsification) */
+	private boolean deactivated;
 	
 	public Vertex(int index) {
 		this.index   = index;
@@ -53,6 +70,7 @@ public class Vertex {
 		this.partitioned = false;
 		
 		this.terminal = false;
+		this.deactivated = false;
 	}
 	
 	
@@ -208,7 +226,7 @@ public class Vertex {
 	
 	
 	/**
-	 * Get the status of whether or not this Vertex is a terminal (Graph Sparsification)
+	 * Get the status of whether or not this Vertex is a terminal (Sparsification)
 	 * @return true if this Vertex is a terminal, false otherwise
 	 */
 	public boolean getTerminal() {
@@ -217,7 +235,7 @@ public class Vertex {
 	
 	
 	/**
-	 * Update this Vertex's status as a terminal (Graph Sparsification)
+	 * Update this Vertex's status as a terminal (Sparsification)
 	 * @param b, the boolean value to set whether or not this Vertex is a terminal
 	 */
 	public void setTerminal(boolean b) {
@@ -226,7 +244,7 @@ public class Vertex {
 	
 	
 	/**
-	 * Get the status of whether or not this Vertex has been deactivated
+	 * Get the status of whether or not this Vertex has been deactivated (Sparsification)
 	 * @return true if Vertex deactivated, false otherwise
 	 */
 	public boolean isDeactivated() {
@@ -235,7 +253,7 @@ public class Vertex {
 	
 	
 	/**
-	 * Deactivates this Vertex
+	 * Deactivates this Vertex (Sparsification)
 	 */
 	public void deactivate() {
 		this.deactivated = true;
@@ -310,7 +328,7 @@ public class Vertex {
 	
 	
 	/**
-	 * Sample this Vertex's partitioned edges for an edge to contract
+	 * Sample this Vertex's partitioned edges for an edge to contract (Alias Method Discrete Sampling)
 	 * @return The vertex that there is an edge from this Vertex to
 	 */
 	public int sample() {

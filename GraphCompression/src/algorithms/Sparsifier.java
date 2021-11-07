@@ -1,6 +1,9 @@
 package algorithms;
 
 
+import java.util.Arrays;
+import java.util.Set;
+import java.util.HashSet;
 import java.util.Map.Entry;
 import java.util.function.Consumer;
 
@@ -9,12 +12,21 @@ import graphComponents.Vertex;
 import graphUtils.SimpleQueuePrio;
 
 
+/**
+ * Sparsifier class. Maintains methods for sparsifying a given Graph G and utilities for checking the quality of sparsification.
+ * 
+ * @author Jake Haakanson. GUID: 2407682H
+ *
+ */
 public class Sparsifier {
 	/** Graph object to carry out edge contractions on */
 	private Graph  G;
 	
 	/** Contraction method, initially blank, can be set to "gauss" for Gaussian elimination */
 	private String method;
+	
+	/** List of indexes of terminal Vertices */
+	private Integer[] terminalList;
 	
 	public Sparsifier(Graph G) {
 		this.G      = G;
@@ -31,15 +43,72 @@ public class Sparsifier {
 	}
 	
 	
-	/*Carries out Vertex sparsification using minimum degree heuristic, contraction method defaults to Vertex sparsification method*/
-	public void sparsify() {
-		SimpleQueuePrio<Vertex> nonTermQueue = new SimpleQueuePrio<Vertex>();	//Queue containing all nonterminals, priority is degree using lower priorities
+	/**
+	 * Sets the terminal list of the sparsifier object to the provided list of terminals
+	 * @param terminalList, a list of indexes of terminal Vertices
+	 */
+	public void setTerminals(Integer[] terminalList) {
+		this.terminalList = terminalList;
+	}
+	
+	
+	/**
+	 * Get the terminal set
+	 * @return the terminal set used by this sparsifier
+	 */
+	public Integer[] getTerminals() {
+		return this.terminalList;
+	}
+	
+	
+	/**
+	 * Creates a set of randomly selected terminals of length (numTerminals + 1)
+	 * @param startIndex, Vertex that must be a terminal (Usually start Vertex in shortest path
+	 * @param numTerminals, number of Vertices to set as terminals
+	 */
+	public void randomTerminals(int startIndex, int numTerminals) {
+		Set<Integer> terminalSet = new HashSet<Integer>();	//Create a new set containing the startIndex or must have Vertex index (Usually start of shortest path)
+		terminalSet.add(startIndex);
 		
-		for (int i = 0; i < G.size(); i++) {
-			Vertex v = G.getVertex(i);
+		for (int terminalCount = 0; terminalCount < numTerminals;) {
+			int rand = (int) (Math.random() * this.G.size());
 			
-			if (!v.getTerminal()) {
-				nonTermQueue.insert(v, v.getAdj().size());	//Degree calculated using size of adjacency list since undirected (or symmetric directed)
+			if (!terminalSet.contains(rand)) {	//Add random terminal to set if it is not already in the set
+				terminalSet.add(rand);
+				terminalCount++;
+			}
+		}
+		
+		Integer[] newTerminalList = new Integer[numTerminals];
+		this.terminalList = terminalSet.toArray(newTerminalList);	//Update terminal set
+	}
+	
+	
+	/**
+	 * Carries out Vertex sparsification based on the method field. Defaults to random edge contractions based on edge weight probabilities.
+	 * Setting this.method to "gauss" will cause this function to use Gaussian elimination to eliminate Vertices from the Graph.
+	 * Setting qualityCheck to true will cause the algorithm to assess the quality of the sparsifier.
+	 * @param qualityCheck
+	 */
+	public void sparsify(boolean qualityCheck) {
+		double[] pathLengths = new double[terminalList.length];	//Stores shortest path lengths to each terminal
+		
+		if (qualityCheck) {
+			this.G.dijkstra(0);	//Compute shortest path to each Vertex
+			
+			for (int i = 1; i < terminalList.length; i++) {
+				int terminalIndex = this.terminalList[i];
+				pathLengths[i] = this.G.getVertex(terminalIndex).getPathLength();	//Store shortest paths to each terminal Vertex
+			}
+		}
+		
+		
+		SimpleQueuePrio<Integer> nonTermQueue = new SimpleQueuePrio<Integer>();	//Queue containing all nonterminals, priority is degree using lower priorities
+		
+		Set<Integer> terminalSet = new HashSet<Integer>(Arrays.asList(terminalList));
+		for (int i = 0; i < G.size(); i++) {
+			if (!terminalSet.contains(i)) {	//Add all nonterminals to the queue
+				nonTermQueue.insert(i, this.G.getVertex(i).getAdj().size());	//Priority is degree of Vertex, which is size of adjacency list
 			}
 		}
 		
@@ -53,10 +122,41 @@ public class Sparsifier {
 			
 		}
 		
-		Vertex currentVert;
+		Integer currentVertIndex;
 		
-		while ((currentVert = nonTermQueue.pop()) != null) {	//While there are non-terminals to contract, contract them
-			contractionMethod.accept(currentVert.getIndex());
+		long startTime = System.nanoTime();	//Start time
+		
+		while ((currentVertIndex = nonTermQueue.pop()) != null) {	//While there are non-terminals to contract, contract them
+			contractionMethod.accept(currentVertIndex);
+		}
+		
+		long endTime = System.nanoTime();	//End time
+		
+		
+		if (qualityCheck) {
+			this.G.dijkstra(0);	//Again, compute shortest path to each Vertex
+			
+			double averageQuality = 0;	//Sum of qualities (for average)
+			double worstQuality   = 0;	//Worst quality found so far
+			
+			for (int i = 1; i < terminalList.length; i++) {
+				int terminalIndex = terminalList[i];
+				double currentQuality = this.G.getVertex(terminalIndex).getPathLength() / pathLengths[i];	//Calculate quality of current path
+				
+				averageQuality += currentQuality;	//Add to total for average
+				worstQuality = (currentQuality > worstQuality) ? currentQuality : worstQuality;	//Update worst quality if necessary
+			}
+			
+			averageQuality = averageQuality / (this.terminalList.length - 1);
+			
+			if (this.method == "gauss") {
+				System.out.println("-- Gaussian Elimination --");
+				
+			} else {
+				System.out.println("-- Random Edge Contractions --");
+			}
+			
+			System.out.println("Completed sparsification in: " + ((endTime - startTime) / 1000000000.0) + "s\nAverage quality: " + averageQuality + "\nWorst Quality: " + worstQuality + "\n");
 		}
 	}
 	

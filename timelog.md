@@ -67,3 +67,4 @@
 
 ### 07/11/2021
 * *5 Hours* Major changes to code, reworked adjacency list representation and adjusted algorithms to use this. Reworked Gauss and contract methods promoting efficiency and minimal code. Adjusted Dijkstra's algorithm to find shortest paths to all Vertices in graph from a given start point.
+* *2 Hours* Added random terminal selection to sparsifier and ability to extract terminal sets for reuse. Added basic quality checking in sparsify method. Made comments more informative.

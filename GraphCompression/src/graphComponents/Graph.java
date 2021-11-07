@@ -6,14 +6,22 @@ import java.util.Map.Entry;
 import graphUtils.SimpleQueuePrio;
 
 
-/*Graph class, maintains a list of Vertices (See Vertex class)*/
+/**
+ * Graph class. Maintains a list of Vertices (See {@code Vertex.java})
+ * 
+ * @author Jake Haakanson. GUID: 2407682H
+ *
+ */
 public class Graph {
-	private Vertex[] vertList;
+	/** List of Vertices in the Graph */
+ 	private Vertex[] vertList;
+ 	
+ 	/** Number of Vertices in the Graph */
 	private int      vertCount;
 	
 	public Graph(int vertCount) {
-		this.vertCount = vertCount;				//Size of Graph as count of Vertices
-		this.vertList  = new Vertex[vertCount];	//List of all Vertices in the Graph
+		this.vertCount = vertCount;
+		this.vertList  = new Vertex[vertCount];
 		
 		for (int i = 0; i < vertCount; i++) {
 			vertList[i] = new Vertex(i);
@@ -45,7 +53,6 @@ public class Graph {
 		return this.vertCount;
 	}
 
-	
 	
 	/**
 	 * Carries out Dijkstra's shortest path algorithm using a priority queue
@@ -96,25 +103,6 @@ public class Graph {
 						neighbourVertex.setPathLength(pathWeight);
 					}
 				}
-			}
-		}
-	}
-	
-	
-	/*Set n random vertices as terminals, mustHave specifies vertices that MUST be terminals*/
-	public void randomTerminals(int n, int[] mustHave) {
-		for (int i: mustHave) {
-			this.getVertex(i).setTerminal(true);	//Set all mustHaves as terminals
-			n--;
-		}
-		
-		while (n > 0) {
-			int randIndex = (int) (Math.random() * this.vertCount);	//Select random terminal index
-			Vertex currentVert = this.getVertex(randIndex);
-			
-			if (!currentVert.getTerminal()) {	//If Vertex is not already a terminal, make it a terminal
-				currentVert.setTerminal(true);
-				n--;
 			}
 		}
 	}
