@@ -64,3 +64,6 @@
 ## Week 7
 ### 01/11/2021
 * *0.5 Hours* Supervisor meeting, added issues to Git issue tracker
+
+### 07/11/2021
+* *5 Hours* Major changes to code, reworked adjacency list representation and adjusted algorithms to use this. Reworked Gauss and contract methods promoting efficiency and minimal code. Adjusted Dijkstra's algorithm to find shortest paths to all Vertices in graph from a given start point.

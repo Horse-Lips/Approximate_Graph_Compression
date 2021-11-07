@@ -1,18 +1,30 @@
 package graphComponents;
 
 
-import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Map.Entry;
 import java.util.TreeMap;
 
 import graphUtils.SimpleTuple;
 
 
-/*Vertex class used for representing Graph nodes*/
+@SuppressWarnings("unchecked")
+
+
+/**
+ * Vertex class used for representing nodes in a Graph data structure.
+ * Edges to other Vertices are represented by HashMap <Integer, Double>
+ * entries, where the Integer represents the index of the other Vertex 
+ * and the Double represents the weight of the edge.
+ * 
+ * @author Jake Haakanson
+ * GUID: 2407682H
+ *
+ */
 public class Vertex {
 	/*Standard Vertex fields*/
-	private int                index;	//Index of this Vertex in the Graph Vertex list
-	private ArrayList<AdjNode> adjList;	//List of Vertices adjacent to the Vertex, or edges between this Vertex and vertices stored in AdjNodes in the list
+	private int              index;		//Index of this Vertex in the Graph Vertex list
+	HashMap<Integer, Double> adjList;	//List of Vertices adjacent to the Vertex, or edges between this Vertex and vertices stored in AdjNodes in the list
 	
 	/*Fields used in shortest path algorithm*/
 	private boolean visited;			//Used to check if Vertex visited in shortest path algorithm
@@ -23,14 +35,15 @@ public class Vertex {
 	/*Fields used in sampling edges*/
 	private double  totalEdgeWeight; 	//Cumulative sum of the edge weights of all edges containing this Vertex (Weights added in addToAdj method)
 	private boolean partitioned;		//Used to check if the current Vertex has been partitioned
-	private SimpleTuple<Double, AdjNode, AdjNode>[] partitions;	//Partitions used in Alias method for discrete sampling
+	private SimpleTuple<Double, Integer, Integer>[] partitions;	//Partitions used in Alias method for discrete sampling
 	
 	/*Fields used in sparsification*/
-	private boolean terminal;	//Indicates whether or not this Vertex is a terminal
+	private boolean terminal;		//Indicates whether or not this Vertex is a terminal
+	private boolean deactivated;	//Indicates whether or not this Vertex has been "removed" from the Graph
 	
 	public Vertex(int index) {
 		this.index   = index;
-		this.adjList = new ArrayList<AdjNode>();
+		this.adjList = new HashMap<Integer, Double>();
 		
 		this.visited = false;
 		this.inQueue = false;
@@ -43,162 +56,246 @@ public class Vertex {
 	}
 	
 	
-	/*Returns the index of the Vertex*/
+	/**
+	 * Get the index of this Vertex
+	 * @return the index of this Vertex
+	 */
 	public int getIndex() {
 		return this.index;
 	}
+
 	
 	
-	/*Updates the ID of the Vertex*/
-	public void setIndex(int index) {
-		this.index = index;
-	}
-	
-	
-	/*Returns the adjacency list of the Vertex*/
-	public ArrayList<AdjNode> getAdj() {
+	/** 
+	 * Get the entire adjacency list of this Vertex
+	 * @return a Hashmap of Integer-Double key-value pairs where the Integer is some Vertex v's index and the Double is the weight of the edge between this Vertex and v
+	 */
+	public HashMap<Integer, Double> getAdj() {
 		return this.adjList;
 	}
 	
 	
-	/*Adds a vertex to the adjacency list*/
-	public void addToAdj(Vertex vert, double weight) {
-		this.adjList.add(new AdjNode(vert, weight));
-		this.totalEdgeWeight += weight;	//Add weight to the cumulative edge weight
+	/**
+	 * Adds an edge between this Vertex and the Vertex represented by vertIndex
+	 * @param vertIndex, the index of the other Vertex in the edge
+	 * @param weight, the weight of the edge
+	 */
+	public void addToAdj(int vertIndex, double weight) {
+		this.adjList.put(vertIndex, weight);
 		
+		this.totalEdgeWeight += weight;	//Add weight to the cumulative edge weight
 		this.partitioned = false;		//The edges have changed so we must repartition
 	}
 	
 	
-	/*Removes a vertex from the adjacency list*/
-	public void removeFromAdj(AdjNode adj) {
-		if (adj != null) {	//This only occurs in certain circumstances, e.g. in Graph.Gauss when n1Adj == n2Adj
-			this.adjList.remove(adj);
-			this.totalEdgeWeight -= adj.getWeight();	//Remove weight from the cumulative edge weight
-			
-			this.partitioned = false;	//Edges have changed so we must repartition
-		}
-	}
-	
-	
-	/*Returns the edge or AdjNode to a specified Vertex*/
-	public AdjNode getFromAdj(Vertex end) {
-		for (AdjNode neighbour: this.adjList) {
-			if (neighbour.getVert().getIndex() == end.getIndex()) {
-				return neighbour;
-			}
-		}
+	/**
+	 * Removes an edge from this Vertex's adjacency list
+	 * @param vertIndex, the index of the Vertex to be removed
+	 */
+	public void removeFromAdj(int vertIndex) {
+		this.totalEdgeWeight -= adjList.get(vertIndex);	//Remove weight from cumulative edge weight
+		this.adjList.remove(vertIndex);
 		
-		return null;
+		this.partitioned = false;	//Edges have changed so we must repartition
 	}
 	
 	
-	/*Returns the parent Vertex of the current Vertex*/
+	/**
+	 * Returns the weight of the edge from this Vertex to the vertex specified by vertIndex
+	 * @param vertIndex, the other Vertex in the edge
+	 * @return the weight between this Vertex and the Vertex represented by vertIndex
+	 */
+	public Double getFromAdj(int vertIndex) {
+		return this.adjList.get(vertIndex);
+	}
+	
+	
+	/**
+	 * Check if the specified Vertex is in this Vertex's adjacency list
+	 * @param vertIndex, the index of the Vertex to check for
+	 * @return true if the Vertex is in the adjacency list, false otherwise
+	 */
+	public boolean adjContains(int vertIndex) {
+		return this.adjList.containsKey(vertIndex);
+	}
+	
+	
+	/**
+	 * Updates the edge containing vertIndex to the weight specified by newWeight. Also updates totalEdgeWeight to reflect this change
+	 * @param vertIndex, index of Vertex whose edge between this Vertex's weight should be updated
+	 * @param newWeight, the new weight of the edge
+	 */
+	public void updateAdj(int vertIndex, double newWeight) {
+		Double oldWeight = this.adjList.put(vertIndex, newWeight);
+		
+		this.totalEdgeWeight += newWeight;
+		
+		if (oldWeight != null) {
+			this.totalEdgeWeight -= -oldWeight;
+		}
+	}
+	
+	
+	/**
+	 * Get the parent of this Vertex (Shortest Path)
+	 * @return the parent of this Vertex
+	 */
 	public Vertex getParent() {
 		return this.parent;
 	}
 	
-	/*Updates the parent of the Vertex*/
+	/**
+	 * Set the parent of this Vertex (Shortest Path)
+	 * @param parent, the parent Vertex of this Vertex
+	 */
 	public void setParent(Vertex parent) {
 		this.parent = parent;
 	}
 	
 	
-	/*Returns the value of visited*/
+	/**
+	 * Check if this Vertex has been visited (Shortest Path)
+	 * @return true if this Vertex has been visited, false otherwise
+	 */
 	public boolean getVisited() {
 		return this.visited;
 	}
 	
 	
-	/*Updates the value of visited*/
+	/**
+	 * Set the value of visited (Shortest Path)
+	 * @param b, the boolean to set the value of visited to
+	 */
 	public void setVisited(boolean b) {
 		this.visited = b;
 	}
 	
 	
-	/*Returns the value of inQueue*/
+	/**
+	 * Check the queue status of this Vertex (Shortest Path)
+	 * @return true if the Vertex is queued, false otherwise
+	 */
 	public boolean getQueueStatus() {
 		return this.inQueue;
 	}
 	
 	
-	/*Updates the value of inQueue*/
+	/**
+	 * Set the value of inQueue (Shortest Path)
+	 * @param b, the boolean value to set inQueue to
+	 */
 	public void setQueueStatus(boolean b) {
 		this.inQueue = b;
 	}
 	
 	
-	/*Returns current shortest path length*/
+	/**
+	 * Get the length of the shortest path to this Vertex from some starting Vertex (Shortest Path)
+	 * @return the length of shortest path from some Vertex to this Vertex
+	 */
 	public double getPathLength() {
 		return this.currentPathLength;
 	}
 	
 	
-	/*Updates current path length*/
+	/**
+	 * Update shortest path length (Shortest Path)
+	 * @param length, the new length of the shortest path from some starting Vertex to this Vertex
+	 */
 	public void setPathLength(double length) {
 		this.currentPathLength = length;
 	}
 	
 	
-	/*Returns whether or not this Vertex is a terminal*/
+	/**
+	 * Get the status of whether or not this Vertex is a terminal (Graph Sparsification)
+	 * @return true if this Vertex is a terminal, false otherwise
+	 */
 	public boolean getTerminal() {
 		return this.terminal;
 	}
 	
 	
-	/*Updates the value of this.terminal*/
+	/**
+	 * Update this Vertex's status as a terminal (Graph Sparsification)
+	 * @param b, the boolean value to set whether or not this Vertex is a terminal
+	 */
 	public void setTerminal(boolean b) {
 		this.terminal = b;
 	}
 	
 	
-	/*Returns the boolean value of partitioned, used to check if the current vertex has been partitioned for alias method discrete sampling*/
+	/**
+	 * Get the status of whether or not this Vertex has been deactivated
+	 * @return true if Vertex deactivated, false otherwise
+	 */
+	public boolean isDeactivated() {
+		return this.deactivated;
+	}
+	
+	
+	/**
+	 * Deactivates this Vertex
+	 */
+	public void deactivate() {
+		this.deactivated = true;
+	}
+	
+	
+	/**
+	 * Check if this Vertex is partitioned (Alias Method Discrete Sampling)
+	 * @return true if this Vertex is partitioned, false otherwise
+	 */
 	public boolean getPartitioned() {
 		return this.partitioned;
 	}
 	
 	
-	/*Updates the value of this.partitioned*/
+	/**
+	 * Set this Vertex as partitioned or unpartitioned (Alias Method Discrete Sampling)
+	 * @param b, the boolean value that is true if this Vertex is partitioned and false otherwise
+	 */
 	public void setPartitioned(boolean b) {
 		this.partitioned = b;
 	}
 	
 	
-	/*Partitions edges and probabilities into boxes for Alias method*/
-	@SuppressWarnings("unchecked")
+	/**
+	 * Partitions edges based on edge probability using the alias method (Alias Method Discrete Sampling)
+	 */
 	public void partition() {
 		if (this.partitioned) { return; }	//Don't partition if it's not needed
 		
 		int pCount      = this.adjList.size();		//Number of partitions
 		this.partitions = new SimpleTuple[pCount];	//Initialise partitions for this particular Vertex
-		TreeMap<Double, AdjNode> probMap = new TreeMap<Double, AdjNode>(); //Create a new TreeMap to store probability-edge pairs
+		TreeMap<Double, Integer> probMap = new TreeMap<Double, Integer>(); //Create a new TreeMap to store probability-edge pairs
 		
-		for (AdjNode neighbour: this.adjList) {	//Iterate neighbours
-			double currentEdgeProb = neighbour.getWeight() / this.totalEdgeWeight;	//Calculate probability of current edge
+		for (Entry<Integer, Double> adjNode: this.adjList.entrySet()) {	//Iterate neighbours
+			double currentEdgeProb = adjNode.getValue() / this.totalEdgeWeight;	//Calculate probability of current edge
 			
 			while (probMap.containsKey(currentEdgeProb)) {
 				currentEdgeProb += 0.000001;	//Account for duplicate keys with a slight change to a probability
 			}
 			
-			probMap.put(currentEdgeProb, neighbour);	//Insert prob-AdjNode pair into the TreeMap
+			probMap.put(currentEdgeProb, adjNode.getKey());	//Insert prob-AdjNode pair into the TreeMap
 		}
 		
 		for (int i = 0; i < pCount; i++) {
-			Entry<Double, AdjNode> smallest = probMap.pollFirstEntry();	//Pop smallest entry from probMap
-			Entry<Double, AdjNode> largest  = probMap.pollLastEntry();	//Pop largest if it exists (It wont if there was only 1 entry as we removed smallest - the only entry)
+			Entry<Double, Integer> smallest = probMap.pollFirstEntry();	//Pop smallest entry from probMap
+			Entry<Double, Integer> largest  = probMap.pollLastEntry();	//Pop largest if it exists (It wont if there was only 1 entry as we removed smallest - the only entry)
 			
 			double leftOver = (1.0 / pCount) - smallest.getKey();	//Calculate the remaining space left in the partition (We fill this with some of the larger probability)
-			SimpleTuple<Double, AdjNode, AdjNode> partition;		//Create a tuple representing a partition which will contain the probability (element 0) of selecting element 1
+			SimpleTuple<Double, Integer, Integer> partition;		//Create a tuple representing a partition which will contain the probability (element 0) of selecting element 1
 			
 			/*Note: here we use 0.00001 to account for roundoff*/
 			if (leftOver > 0.00001 && largest != null) {	//Fill any leftover space using largest prob
 				probMap.put(largest.getKey() - leftOver, largest.getValue());	//Calculate remaining probability of largest and reinsert into the TreeMap
 				
-				partition = new SimpleTuple<Double, AdjNode, AdjNode>(smallest.getKey(), smallest.getValue(), largest.getValue());	//Fill the partition as stated above
+				partition = new SimpleTuple<Double, Integer, Integer>(smallest.getKey(), smallest.getValue(), largest.getValue());	//Fill the partition as stated above
 				this.partitions[i] = partition;
 				
 			} else {
-				partition = new SimpleTuple<Double, AdjNode, AdjNode>(smallest.getKey(), smallest.getValue(), smallest.getValue());	//In this case, "smallest" occupies the entire partition
+				partition = new SimpleTuple<Double, Integer, Integer>(smallest.getKey(), smallest.getValue(), smallest.getValue());	//In this case, "smallest" occupies the entire partition
 				this.partitions[i] = partition;
 				
 			}
@@ -212,11 +309,16 @@ public class Vertex {
 	}
 	
 	
-	/*Sample from partition and return an edge to contract*/
-	public AdjNode sample() {
+	/**
+	 * Sample this Vertex's partitioned edges for an edge to contract
+	 * @return The vertex that there is an edge from this Vertex to
+	 */
+	public int sample() {
+		this.partition();	//Partition Vertex if needed
+		
 		double randProb  = Math.random() / this.partitions.length;			//Generate a random number between 0 and 1 inclusive and divide by amount of partitions
 		int randomPIndex = (int) (Math.random() * this.partitions.length);	//Choose a random partition
-		SimpleTuple<Double, AdjNode, AdjNode> partition = partitions[randomPIndex];
+		SimpleTuple<Double, Integer, Integer> partition = partitions[randomPIndex];
 		
 		if (randProb <= partition.getFirst()) {	//If randProb lies within the probability then return the "smallest"
 			return partition.getSecond();

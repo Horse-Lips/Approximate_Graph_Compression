@@ -3,192 +3,67 @@ package main;
 
 import java.io.IOException;
 
+import algorithms.Sparsifier;
 import graphComponents.Graph;
-import graphComponents.Vertex;
 import graphUtils.General;
 
 
 public class Main {
 	public static void main(String[] args) throws IOException {
 		String file1 = "C:/Users/CallM/Documents/Life/UniGlasgow/Year4/Project/Code/exampleGraph1.txt";
-		String file2 = "C:/Users/CallM/Documents/Life/UniGlasgow/Year4/Project/Code/exampleGraph2.txt";
-		String file3 = "C:/Users/CallM/Documents/Life/UniGlasgow/Year4/Project/Code/exampleGraph3.txt";
-		
-		long startTime, endTime;
-		
-		Graph G;
-		
-		
-		double percentTerminals = 60;	//Set % of Vertices as terminals
-		double divTerminals;
-		int    totalTerminals;			//Total amount of terminals in Graph
-		int[] mustHave = new int[2];					//Vertex indexes that must be terminals (Just start and end here)
-		mustHave[0] = 0;
-		
-		
-		int    endIndex;	//Goal index in shortest path
-		Vertex endVert;		//Vertex representation of goal
-		double originalPathLength;
-		
-		/*Compression of small graph (file1)*/
-		System.out.println("Compressing small graph");
-		
-		G = General.fromFile(file1);
-		endIndex = 6;
-		endVert  = G.getVertex(endIndex);
-		
-		G.dijkstra(0, endIndex);
-		originalPathLength = endVert.getPathLength();
-		System.out.println("Shortest path of length: " + originalPathLength);
-		
-		divTerminals = 100 / percentTerminals;
-		totalTerminals   = ((int) (G.size() / divTerminals)) - mustHave.length;
-		mustHave[1]      = endIndex;
-		
-		G.randomTerminals(totalTerminals, mustHave);	//Set totalTerminals Vertices as terminals at random
-		
-		startTime = System.nanoTime();
-		G.sparsify("");								//Sparsify graph using random edge contractions
-		endTime = System.nanoTime();
-		
-		G.dijkstra(0, endVert.getIndex());				//Re-calculate shortest path
-		System.out.println("Removed " + (100 - percentTerminals) + "% of vertices with quality " + (endVert.getPathLength() / originalPathLength) + " in " + (endTime - startTime) / 1000000000.0 + "s");
-		System.out.println("New shortest path lenth: " + endVert.getPathLength());
-		
-		System.out.println("\n");
-		
-		
-		/*Compression of medium graph (file2)*/
-		System.out.println("Compressing medium graph");
-		
-		G = General.fromFile(file2);
-		
-		endIndex = 21;
-		endVert  = G.getVertex(endIndex);
-		
-		G.dijkstra(0, endIndex);
-		originalPathLength = endVert.getPathLength();
-		System.out.println("Shortest path of length: " + originalPathLength);
-		
-		divTerminals = 100 / percentTerminals;
-		totalTerminals   = ((int) ((G.size() / divTerminals) + 1)) - mustHave.length;
-		mustHave[1]      = endIndex;
-		
-		G.randomTerminals(totalTerminals, mustHave);	//Set totalTerminals Vertices as terminals at random
-		
-		startTime = System.nanoTime();
-		G.sparsify("");								//Sparsify graph using random edge contractions
-		endTime = System.nanoTime();
-		
-		G.dijkstra(0, endVert.getIndex());				//Re-calculate shortest path
-		System.out.println("Removed " + (100 - percentTerminals) + "% of vertices with quality " + (endVert.getPathLength() / originalPathLength) + " in " + (endTime - startTime) / 1000000000.0 + "s");
-		System.out.println("New shortest path lenth: " + endVert.getPathLength());
-		
-		
-		System.out.println("\n");
-		
-		
-		/*Compression of large graph (file3)*/
-		System.out.println("Compressing medium graph");
-		
-		G = General.fromFile(file3);
-		
-		endIndex = 65;
-		endVert  = G.getVertex(endIndex);
-		
-		G.dijkstra(0, endIndex);
-		originalPathLength = endVert.getPathLength();
-		System.out.println("Shortest path of length: " + originalPathLength);
-		
-		divTerminals = 100 / percentTerminals;
-		totalTerminals   = ((int) ((G.size() / divTerminals) + 1)) - mustHave.length;
-		mustHave[1]      = endIndex;
-		
-		G.randomTerminals(totalTerminals, mustHave);	//Set totalTerminals Vertices as terminals at random
-		
-		startTime = System.nanoTime();
-		G.sparsify("");								//Sparsify graph using random edge contractions
-		endTime = System.nanoTime();
-		
-		G.dijkstra(0, endVert.getIndex());				//Re-calculate shortest path
-		System.out.println("Removed " + (100 - percentTerminals) + "% of vertices with quality " + (endVert.getPathLength() / originalPathLength) + " in " + (endTime - startTime) / 1000000000.0 + "s");
-		System.out.println("New shortest path lenth: " + endVert.getPathLength());
-		
-		
-		/*String file1 = "C:/Users/CallM/Documents/Life/UniGlasgow/Year4/Project/Code/exampleGraph1.txt";
-		
 		Graph G1 = General.fromFile(file1);
 		Graph G2 = General.fromFile(file1);
 		
-		G1.dijkstra(0, 6);
-		G2.dijkstra(0, 6);
+		G1.dijkstra(0);
+		G2.dijkstra(0);
 		
-		long   startTime, endTime;
+		System.out.println("G1 shortest paths from Vertex 0 before contraction");
+		for (int i = 0; i < G1.size(); i++) {
+			System.out.println("Vertex " + i + ": " + G1.getVertex(i).getPathLength());
+		}
+		System.out.println("\n");
 		
-		System.out.println("Example Graph 1 (Small Graph)");
+		G1.getVertex(0).setTerminal(true);
+		G1.getVertex(2).setTerminal(true);
+		G1.getVertex(4).setTerminal(true);
+		G1.getVertex(6).setTerminal(true);
 		
-		startTime = System.nanoTime();
-		G1.sparsify("gauss");
-		endTime = System.nanoTime();
+		Sparsifier G1Sparsifier = new Sparsifier(G1);
+		G1Sparsifier.setMethod("gauss");
 		
-		System.out.println("Gaussian time: " + ((endTime - startTime) / 1000000000.0) + "s");
+		G1Sparsifier.sparsify();
 		
-		startTime = System.nanoTime();
-		G2.sparsify("");
-		endTime = System.nanoTime();
-		
-		System.out.println("Vertex sparsification time: " + ((endTime - startTime) / 1000000000.0) + "s");
-		
-		
+		System.out.println("G1 shortest paths from Vertex 0 after contraction");
+		for (int i = 0; i < G1.size(); i++) {
+			if (!G1.getVertex(i).isDeactivated()) {
+				System.out.println("Vertex " + i + ": " + G1.getVertex(i).getPathLength());
+			}
+		}
 		System.out.println("\n");
 		
 		
-		String file2 = "C:/Users/CallM/Documents/Life/UniGlasgow/Year4/Project/Code/exampleGraph2.txt";
-		
-		G1 = General.fromFile(file2);
-		G2 = General.fromFile(file2);
-		
-		G1.dijkstra(0, 19);
-		G2.dijkstra(0, 19);
-		
-		System.out.println("Example Graph 2 (Medium Graph)");
-		
-		startTime = System.nanoTime();
-		G1.sparsify("gauss");
-		endTime = System.nanoTime();
-		
-		System.out.println("Gaussian time: " + ((endTime - startTime) / 1000000000.0) + "s");
-		
-		startTime = System.nanoTime();
-		G2.sparsify("");
-		endTime = System.nanoTime();
-		
-		System.out.println("Vertex sparsification time: " + ((endTime - startTime) / 1000000000.0) + "s");
-		
-		
+		System.out.println("G2 shortest paths from Vertex 0 before contraction");
+		for (int i = 0; i < G2.size(); i++) {
+			System.out.println("Vertex " + i + ": " + G2.getVertex(i).getPathLength());
+		}
 		System.out.println("\n");
 		
+		G2.getVertex(0).setTerminal(true);
+		G2.getVertex(2).setTerminal(true);
+		G2.getVertex(4).setTerminal(true);
+		G2.getVertex(6).setTerminal(true);
 		
-		String file3 = "C:/Users/CallM/Documents/Life/UniGlasgow/Year4/Project/Code/exampleGraph3.txt";
+		Sparsifier G2Sparsifier = new Sparsifier(G2);
 		
-		G1 = General.fromFile(file3);
-		G2 = General.fromFile(file3);
+		G2Sparsifier.sparsify();
 		
-		G1.dijkstra(0, 63);
-		G2.dijkstra(0, 63);
+		System.out.println("G2 shortest paths from Vertex 0 after contraction");
+		for (int i = 0; i < G2.size(); i++) {
+			if (!G2.getVertex(i).isDeactivated()) {
+				System.out.println("Vertex " + i + ": " + G2.getVertex(i).getPathLength());
+			}
+		}
+		System.out.println("\n");
 		
-		System.out.println("Example Graph 3 (Large Graph)");
-		
-		startTime = System.nanoTime();
-		G1.sparsify("gauss");
-		endTime = System.nanoTime();
-		
-		System.out.println("Gaussian time: " + ((endTime - startTime) / 1000000000.0) + "s");
-		
-		startTime = System.nanoTime();
-		G2.sparsify("");
-		endTime = System.nanoTime();
-		
-		System.out.println("Vertex sparsification time: " + ((endTime - startTime) / 1000000000.0) + "s");*/
 	}
 }

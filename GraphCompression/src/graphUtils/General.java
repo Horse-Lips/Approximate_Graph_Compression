@@ -29,7 +29,7 @@ public class General {
 				double edgeWeight = Double.valueOf(chars[neighbIndex]);
 				
 				if (edgeWeight > 0) {
-					currentVertex.addToAdj(newGraph.getVertex(neighbIndex), edgeWeight);
+					currentVertex.addToAdj(neighbIndex, edgeWeight);
 				}
 			}
 			
