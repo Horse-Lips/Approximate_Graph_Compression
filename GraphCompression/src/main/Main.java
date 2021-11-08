@@ -10,7 +10,7 @@ import graphUtils.General;
 
 public class Main {
 	public static void main(String[] args) throws IOException {
-		String file1 = "C:/Users/CallM/Documents/Life/UniGlasgow/Year4/Project/Code/exampleGraph1.txt";
+		String file1 = "C:/Users/CallM/Documents/Life/UniGlasgow/Year4/Project/Code/exampleGraph3.txt";
 		
 		
 		/*Create two graphs from the same file*/
@@ -24,7 +24,7 @@ public class Main {
 		
 		
 		/*Create a random set of terminals and use it for both graphs*/
-		G1Sparsifier.randomTerminals(0, 2);	//Set 40 random Vertices as terminals
+		G1Sparsifier.randomTerminals(0, 40);	//Set 40 random Vertices as terminals
 		G2Sparsifier.setTerminals(G1Sparsifier.getTerminals());
 		
 		
