@@ -69,6 +69,9 @@
 * *5 Hours* Major changes to code, reworked adjacency list representation and adjusted algorithms to use this. Reworked Gauss and contract methods promoting efficiency and minimal code. Adjusted Dijkstra's algorithm to find shortest paths to all Vertices in graph from a given start point.
 * *2 Hours* Added random terminal selection to sparsifier and ability to extract terminal sets for reuse. Added basic quality checking in sparsify method. Made comments more informative.
 
-### Week 8
+## Week 8
 ### 08/11/2021
 * *0.5 Hours* Meeting with supervisor
+
+### 09/11/2021
+* *2 Hours* Worked on dissertation
