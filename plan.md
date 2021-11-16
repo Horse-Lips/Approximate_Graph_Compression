@@ -13,9 +13,9 @@
 * **Begin implementing algorithms to be analysed**
 * **Implement Dijkstra's algorithm, min-degree heuristic, priority queue, research alias method**
 * **Research alias method, ensure sparsifiers are correct and learn to assess quality**
-* **Week 7**
-* **Week 8**
-* **Week 9**
+* **Alter relevant classes in interests of efficiency**
+* **Correct quality checks, write more dissertation**
+* **Correct quality checks, write more dissertation**
 * **Week 10**
 * **Week 11 [PROJECT WEEK]**
 * **Week 12 [PROJECT WEEK]** Status report submitted.

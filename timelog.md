@@ -75,3 +75,7 @@
 
 ### 09/11/2021
 * *2 Hours* Worked on dissertation
+
+## Week 9
+### 16/11/2021
+* *1 Hour* Corrected quality checks
