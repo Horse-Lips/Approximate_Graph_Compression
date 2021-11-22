@@ -79,3 +79,7 @@
 ## Week 9
 ### 16/11/2021
 * *1 Hour* Corrected quality checks
+
+## Week 10
+### 22/11/2021
+* *0.5 Hours* Meeting with supervisor
