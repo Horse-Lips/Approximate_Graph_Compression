@@ -83,3 +83,4 @@
 ## Week 10
 ### 22/11/2021
 * *0.5 Hours* Meeting with supervisor
+* *1.5 Horus* Implemented naive method for sparsifying using shortest path tree

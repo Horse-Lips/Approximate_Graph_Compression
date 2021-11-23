@@ -2,6 +2,8 @@ package algorithms;
 
 
 import java.util.Arrays;
+import java.util.Collection;
+import java.util.HashMap;
 import java.util.Set;
 import java.util.HashSet;
 import java.util.Map.Entry;
@@ -49,6 +51,10 @@ public class Sparsifier {
 	 */
 	public void setTerminals(Integer[] terminalList) {
 		this.terminalList = terminalList;
+		
+		for (int termIndex: terminalList) {
+			G.getVertex(termIndex).setTerminal(true);
+		}
 	}
 	
 	
@@ -248,5 +254,78 @@ public class Sparsifier {
 			currentNeighbour.removeFromAdj(toRemoveIndex);	//Remove edge from currentNeighbour to toRemove
 		}
 		toRemove.deactivate();	//deactivate toRemove
+	}
+	
+	
+	/**
+	 * Converts this graph to a shortest-path tree using dijkstra's algorithm and a given set of terminals
+	 */
+	@SuppressWarnings("unchecked")
+	public void SPTree() {
+		HashMap<Integer, Double>[] newAdjLists = new HashMap[G.size()];
+		
+		for (int i = 0; i < G.size(); i++) {
+			newAdjLists[i] = new HashMap<Integer, Double>();
+		}
+		
+		for (Integer sourceTerm: this.terminalList) {
+			G.dijkstra(sourceTerm);
+			System.out.println("Source: " + sourceTerm);
+			
+			for (Integer terminal: this.terminalList) {
+				if (sourceTerm != terminal) {
+					Vertex currentVert = G.getVertex(terminal);
+					Vertex parent      = currentVert.getParent();
+					
+					while (parent != null) {
+						int currentIndex = currentVert.getIndex();
+						int parentIndex  = parent.getIndex();
+						
+						double newWeight = (newAdjLists[currentIndex].containsKey(parentIndex)) ?
+								Math.min(currentVert.getFromAdj(parentIndex), newAdjLists[currentIndex].get(parentIndex)) :
+								currentVert.getFromAdj(parentIndex);
+						
+						newAdjLists[currentIndex].put(parentIndex, newWeight);
+						newAdjLists[parentIndex].put(currentIndex, newWeight);
+						
+						currentVert = currentVert.getParent();
+						parent      = parent.getParent();
+					}
+				}
+			}
+		}
+		
+		for (int i = 0; i < G.size(); i++) {
+			HashMap<Integer, Double> newAdj = newAdjLists[i];
+			
+			if (newAdj.isEmpty()) {
+				G.getVertex(i).deactivate();
+				
+			} else if (newAdj.size() == 2 && !G.getVertex(i).getTerminal()) {
+				System.out.println(i);
+				double newWeight = 0;
+				
+				for (double edgeWeight: newAdj.values()) {
+					newWeight += edgeWeight;
+				}
+				
+				for (Integer key1: newAdj.keySet()) {
+					newAdjLists[key1].remove(i);
+					
+					for (Integer key2: newAdj.keySet()) {
+						if (key1 != key2) {
+							newAdjLists[key1].put(key2, newWeight);
+						}
+					}
+				}
+				
+				G.getVertex(i).deactivate();
+				
+			} else {
+				G.getVertex(i).setAdj(newAdj);
+				
+			}
+		}
+		
 	}
 }

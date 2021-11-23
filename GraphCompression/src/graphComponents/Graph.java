@@ -62,7 +62,8 @@ public class Graph {
 		for (Vertex v: this.vertList) {	//Set all vertices as...
 			v.setVisited(false);		//Unvisited
 			v.setQueueStatus(false);	//Un-queued
-			v.setPathLength(0);			//No path leading to this Vertex
+			v.setPathLength(0);			//Having no path leading to this Vertex
+			v.setParent(null);			//Having no parent
 		}
 		
 		Vertex startVert = this.getVertex(startIndex);

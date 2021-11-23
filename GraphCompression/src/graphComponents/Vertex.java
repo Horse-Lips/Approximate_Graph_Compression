@@ -39,7 +39,7 @@ public class Vertex {
 	private double currentPathLength;
 	
 	/** Parent of this Vertex (Shortest Path) */
-	private Vertex parent = null;
+	private Vertex parent;
 	
 	/*Fields used in sampling edges*/
 	/** Cumulative sum of all edge weights of edges incident to this Vertex (Alias Method Discrete Sampling) */
@@ -151,6 +151,15 @@ public class Vertex {
 		if (oldWeight != null) {
 			this.totalEdgeWeight -= -oldWeight;
 		}
+	}
+	
+	
+	/**
+	 * Sets the adjacency hashmap of this vertex to the one provided
+	 * @param newAdj, a hashmap representing adjacent vertices and their edge weights
+	 */
+	public void setAdj(HashMap<Integer, Double> newAdj) {
+		this.adjList = newAdj;
 	}
 	
 	
