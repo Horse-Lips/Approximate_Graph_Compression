@@ -3,8 +3,9 @@ package graphComponents;
 
 import java.util.HashMap;
 import java.util.Map.Entry;
-import java.util.TreeMap;
 
+import graphUtils.SimpleAVLTree;
+import graphUtils.SimpleAVLTree.Node;
 import graphUtils.SimpleTuple;
 
 
@@ -149,7 +150,7 @@ public class Vertex {
 		this.totalEdgeWeight += newWeight;
 		
 		if (oldWeight != null) {
-			this.totalEdgeWeight -= -oldWeight;
+			this.totalEdgeWeight -= oldWeight;
 		}
 	}
 	
@@ -288,48 +289,47 @@ public class Vertex {
 	
 	
 	/**
-	 * Partitions edges based on edge probability using the alias method (Alias Method Discrete Sampling)
+	 * Partition edges based on edge probability using alias method (discrete sampling)
 	 */
 	public void partition() {
-		if (this.partitioned) { return; }	//Don't partition if it's not needed
+		if (this.partitioned) { return; }	//Don't partition if we don't need to
 		
-		int pCount      = this.adjList.size();		//Number of partitions
-		this.partitions = new SimpleTuple[pCount];	//Initialise partitions for this particular Vertex
-		TreeMap<Double, Integer> probMap = new TreeMap<Double, Integer>(); //Create a new TreeMap to store probability-edge pairs
+		int partitionCount = this.adjList.size();				//Number of partitions to create
+		this.partitions    = new SimpleTuple[partitionCount];	//Initialise partitions for the vertex
 		
-		for (Entry<Integer, Double> adjNode: this.adjList.entrySet()) {	//Iterate neighbours
-			double currentEdgeProb = adjNode.getValue() / this.totalEdgeWeight;	//Calculate probability of current edge
+		SimpleAVLTree<Integer> probTree = new SimpleAVLTree<Integer>();	//Initialise AVL tree to store probability-edge pairs
+		
+		for (Entry<Integer, Double> adjNode: this.adjList.entrySet()) {
+			double currentEdgeProb = adjNode.getValue() / this.totalEdgeWeight;	//Calculate current edge probability
 			
-			while (probMap.containsKey(currentEdgeProb)) {
-				currentEdgeProb += 0.000001;	//Account for duplicate keys with a slight change to a probability
-			}
-			
-			probMap.put(currentEdgeProb, adjNode.getKey());	//Insert prob-AdjNode pair into the TreeMap
+			probTree.insert(currentEdgeProb, adjNode.getKey());	//Insert all probability-edge pair into AVL tree
 		}
 		
-		for (int i = 0; i < pCount; i++) {
-			Entry<Double, Integer> smallest = probMap.pollFirstEntry();	//Pop smallest entry from probMap
-			Entry<Double, Integer> largest  = probMap.pollLastEntry();	//Pop largest if it exists (It wont if there was only 1 entry as we removed smallest - the only entry)
+		for (int i = 0; i < partitionCount; i++) {
+			Node<Integer> smallest = probTree.popMin();	//Pop entry in tree with smallest key
 			
-			double leftOver = (1.0 / pCount) - smallest.getKey();	//Calculate the remaining space left in the partition (We fill this with some of the larger probability)
-			SimpleTuple<Double, Integer, Integer> partition;		//Create a tuple representing a partition which will contain the probability (element 0) of selecting element 1
+			double leftOver = (1.0 / partitionCount) - smallest.getKey();	//Fill partition with as much of smallest's probability as possible
 			
-			/*Note: here we use 0.00001 to account for roundoff*/
-			if (leftOver > 0.00001 && largest != null) {	//Fill any leftover space using largest prob
-				probMap.put(largest.getKey() - leftOver, largest.getValue());	//Calculate remaining probability of largest and reinsert into the TreeMap
+			SimpleTuple<Double, Integer, Integer> partition;	//Create a new partition in the form of a tuple
+			
+			if (leftOver > 0.00001) {	//Fill leftover space with some of largest tree entry's probability
+				Node<Integer> largest  = probTree.popMax();	//Pop entry in tree with largest key
 				
-				partition = new SimpleTuple<Double, Integer, Integer>(smallest.getKey(), smallest.getValue(), largest.getValue());	//Fill the partition as stated above
-				this.partitions[i] = partition;
+				double largestValue = largest.getKey() - leftOver;
+				
+				if (largestValue > 0.00001) {
+					probTree.insert(largest.getKey() - leftOver, largest.getValue());	//Reinsert into tree with reduced probability
+				}
+				
+				partition = new SimpleTuple<Double, Integer, Integer>(smallest.getKey(), smallest.getValue(), largest.getValue());
 				
 			} else {
-				partition = new SimpleTuple<Double, Integer, Integer>(smallest.getKey(), smallest.getValue(), smallest.getValue());	//In this case, "smallest" occupies the entire partition
-				this.partitions[i] = partition;
+				partition = new SimpleTuple<Double, Integer, Integer>(smallest.getKey(), smallest.getValue(), smallest.getValue());
 				
 			}
 			
-			if (largest != null) {
-				probMap.put(largest.getKey(), largest.getValue());
-			}
+			
+			this.partitions[i] = partition;
 		}
 		
 		this.partitioned = true;

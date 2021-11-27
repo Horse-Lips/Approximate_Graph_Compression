@@ -83,4 +83,7 @@
 ## Week 10
 ### 22/11/2021
 * *0.5 Hours* Meeting with supervisor
-* *1.5 Horus* Implemented naive method for sparsifying using shortest path tree
+* *1.5 Hours* Implemented naive method for sparsifying using shortest path tree
+
+### 27/11/2021
+* *4.5 Hours* Implemented AVLTree, modified partitioning to use this instead. Refined test outputs and new sptree method

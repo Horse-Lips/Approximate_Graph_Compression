@@ -2,12 +2,10 @@ package algorithms;
 
 
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.Set;
 import java.util.HashSet;
 import java.util.Map.Entry;
-import java.util.function.Consumer;
 
 import graphComponents.Graph;
 import graphComponents.Vertex;
@@ -125,26 +123,36 @@ public class Sparsifier {
 			}
 		}
 		
-		Consumer<Integer> contractionMethod;
-		
-		if (this.method == "gauss") {
-			contractionMethod = this::Gauss;	//Use Gauss if specified
-			
-		} else {
-			contractionMethod = this::contract;	//Default to random edge contraction
-			
-		}
-		
-		
+		long startTime = System.nanoTime();
+		long endTime   = System.nanoTime();
 		Integer currentVertIndex;
 		
-		long startTime = System.nanoTime();	//Start time
+		if (this.method == "gauss") {
+			startTime = System.nanoTime();
+			
+			while ((currentVertIndex = nonTermQueue.pop()) != null) {
+				this.Gauss(currentVertIndex);
+			}
+			
+			endTime = System.nanoTime();
 		
-		while ((currentVertIndex = nonTermQueue.pop()) != null) {	//While there are non-terminals to contract, contract them
-			contractionMethod.accept(currentVertIndex);
+		} else if (this.method == "sptree") {
+			startTime = System.nanoTime();
+			
+			this.SPTree();
+			
+			endTime = System.nanoTime();
+			
+		} else {
+			startTime = System.nanoTime();
+			
+			while ((currentVertIndex = nonTermQueue.pop()) != null) {
+				this.contract(currentVertIndex);
+			}
+			
+			endTime = System.nanoTime();
+			
 		}
-		
-		long endTime = System.nanoTime();	//End time
 		
 		
 		if (qualityCheck) {
@@ -166,6 +174,9 @@ public class Sparsifier {
 			if (this.method == "gauss") {
 				System.out.println("-- Gaussian Elimination --");
 				
+			} else if (this.method == "sptree") {
+				System.out.println("-- Shortest Path Tree --");
+				
 			} else {
 				System.out.println("-- Random Edge Contractions --");
 			}
@@ -181,6 +192,8 @@ public class Sparsifier {
 				
 				System.out.println(currentLine);
 			}
+			
+			System.out.println("\n");
 		}
 	}
 	
@@ -245,6 +258,7 @@ public class Sparsifier {
 			
 			if (currentNeighbour.adjContains(superNodeIndex)) {	//If an edge from neighbour to supernode already exists, set the weight to the minimum of the old and new weights
 				currentNeighbour.updateAdj(superNodeIndex, Math.min(currentNeighbour.getFromAdj(superNodeIndex), newWeight));
+				superNode.updateAdj(currentNeighbour.getIndex(), Math.min(currentNeighbour.getFromAdj(superNodeIndex), newWeight));
 				
 			} else {	//No edge exists so create a new edge to supernode with weight equal to the path weigt from neighbour to superNode through toRemove
 				currentNeighbour.addToAdj(superNodeIndex, newWeight);
@@ -270,7 +284,6 @@ public class Sparsifier {
 		
 		for (Integer sourceTerm: this.terminalList) {
 			G.dijkstra(sourceTerm);
-			System.out.println("Source: " + sourceTerm);
 			
 			for (Integer terminal: this.terminalList) {
 				if (sourceTerm != terminal) {
@@ -302,7 +315,6 @@ public class Sparsifier {
 				G.getVertex(i).deactivate();
 				
 			} else if (newAdj.size() == 2 && !G.getVertex(i).getTerminal()) {
-				System.out.println(i);
 				double newWeight = 0;
 				
 				for (double edgeWeight: newAdj.values()) {
