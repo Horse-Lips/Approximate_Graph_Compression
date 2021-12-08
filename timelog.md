@@ -87,3 +87,7 @@
 
 ### 27/11/2021
 * *4.5 Hours* Implemented AVLTree, modified partitioning to use this instead. Refined test outputs and new sptree method
+
+## Week 12
+### 08/02/2021
+* *2.5 Hours* Worked on dissertation
