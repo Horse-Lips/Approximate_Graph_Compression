@@ -16,9 +16,9 @@
 * **Alter relevant classes in interests of efficiency**
 * **Correct quality checks, write more dissertation**
 * **Correct quality checks, write more dissertation**
-* **Week 10**
-* **Week 11 [PROJECT WEEK]**
-* **Week 12 [PROJECT WEEK]** Status report submitted.
+* **Implement Dijkstra Shortest Path Tree Algorithm**
+* **Write some dissertation**
+* **Write some dissertation, implement independent set changes and approach improvements to random contractions algorithm** Status report submitted.
 
 ## Winter break
 
