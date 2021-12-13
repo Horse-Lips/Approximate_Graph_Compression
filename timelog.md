@@ -88,9 +88,14 @@
 ### 27/11/2021
 * *4.5 Hours* Implemented AVLTree, modified partitioning to use this instead. Refined test outputs and new sptree method
 
-## Week 12
+## Week 11
 ### 08/12/2021
 * *2.5 Hours* Worked on dissertation
 
 ### 12/12/2021
 * *1 Hour* Read Paper on Maximum Independent Set approx algorithms
+
+## Week 12
+### 13/12/2021
+* *0.5 Hours* Meeting with supervisor
+* *1.5 Hours* Read papers briefly on greedy independent set and Dijkstra's shortest path tree algorithm
