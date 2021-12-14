@@ -176,4 +176,37 @@ public class SimpleQueuePrio<Item> {
 			
 		}
 	}
+	
+	
+	/*Removes an item from the queue*/
+	public void remove(Item key) {
+		if (this.head == null) {
+			return;
+			
+		} else if (this.head.getVal() == key) {
+			this.head = this.head.getNext();
+
+			if (this.head != null) {
+				this.head.setPrev(null);
+			}
+			
+			return;
+		}
+		
+		Node<Item> currentNode = this.head;
+		
+		while (currentNode != null && currentNode.getVal() != key) {
+			currentNode = currentNode.getNext();
+		}
+		
+		if (currentNode != null) {
+			if (currentNode.getPrev() != null) {
+				currentNode.getPrev().setNext(currentNode.getNext());
+			}
+			
+			if (currentNode.getNext() != null) {
+				currentNode.getNext().setPrev(currentNode.getPrev());
+			}
+		}
+	}
 }

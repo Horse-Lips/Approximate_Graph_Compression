@@ -1,6 +1,7 @@
 package algorithms;
 
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Set;
@@ -89,6 +90,50 @@ public class Sparsifier {
 	
 	
 	/**
+	 * Determines the (approximate) maximum independent set of all non-deactivated non-terminals.
+	 * @return S, the independent set of non-terminals
+	 */
+	public ArrayList<Integer> indSet() {
+		ArrayList<Integer> S = new ArrayList<Integer>();
+		
+		SimpleQueuePrio<Integer> nonTerms = this.getNonTermQueue();
+		Integer currentVert;
+		
+		while ((currentVert = nonTerms.pop()) != null) {
+			S.add(currentVert);
+			this.G.getVertex(currentVert).deactivate();
+			
+			for (int i: this.G.getVertex(currentVert).getAdj().keySet()) {
+				System.out.print("Removing: " + i + " from " + currentVert + "\n");
+				nonTerms.remove(i);
+			}
+		}
+		
+		return S;
+	}
+	
+	
+	/**
+	 * Creates a priority queue containing all non-terminal vertices
+	 * @return a priority queue containing all non terminals
+	 */
+	public SimpleQueuePrio<Integer> getNonTermQueue() {
+		SimpleQueuePrio<Integer> nonTermQueue = new SimpleQueuePrio<Integer>();	//Queue containing all nonterminals, priority is degree using lower priorities
+		
+		Set<Integer> terminalSet = new HashSet<Integer>(Arrays.asList(terminalList));
+		for (int i = 0; i < G.size(); i++) {
+			Vertex currentVert = this.G.getVertex(i);
+			
+			if (!terminalSet.contains(i) && !currentVert.isDeactivated()) {	//Add all active nonterminals to the queue
+				nonTermQueue.insert(i, currentVert.getAdj().size());	//Priority is degree of Vertex, which is size of adjacency list
+			}
+		}
+		
+		return nonTermQueue;
+	}
+	
+	
+	/**
 	 * Carries out Vertex sparsification based on the method field. Defaults to random edge contractions based on edge weight probabilities.
 	 * Setting this.method to "gauss" will cause this function to use Gaussian elimination to eliminate Vertices from the Graph.
 	 * Setting qualityCheck to true will cause the algorithm to assess the quality of the sparsifier.
@@ -113,15 +158,7 @@ public class Sparsifier {
 			}
 		}
 		
-		
-		SimpleQueuePrio<Integer> nonTermQueue = new SimpleQueuePrio<Integer>();	//Queue containing all nonterminals, priority is degree using lower priorities
-		
-		Set<Integer> terminalSet = new HashSet<Integer>(Arrays.asList(terminalList));
-		for (int i = 0; i < G.size(); i++) {
-			if (!terminalSet.contains(i)) {	//Add all nonterminals to the queue
-				nonTermQueue.insert(i, this.G.getVertex(i).getAdj().size());	//Priority is degree of Vertex, which is size of adjacency list
-			}
-		}
+		SimpleQueuePrio<Integer> nonTermQueue = this.getNonTermQueue();
 		
 		long startTime = System.nanoTime();
 		long endTime   = System.nanoTime();
