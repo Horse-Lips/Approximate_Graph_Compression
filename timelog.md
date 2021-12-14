@@ -11,10 +11,10 @@
 
 ## Week 2
 ### 30/09/2021
-* *2-3 Hours* Researched potentially relevant papers in the area prior to the initial meeting with supervisor
+* *3 Hours* Researched potentially relevant papers in the area prior to the initial meeting with supervisor
 
 ### 01/10/2021
-* *2-3 Hours* Researched readings as above
+* *3 Hours* Researched readings as above
 
 ## Week 3
 ### 04/10/2021
@@ -100,3 +100,6 @@
 * *0.5 Hours* Meeting with supervisor
 * *1.5 Hours* Read papers briefly on greedy independent set and Dijkstra's shortest path tree algorithm
 * * 2.5 Hours* Worked on dissertation implementation descriptions, considered issues that may arise in current implementation (see issues)
+
+### 14/12/2021
+* *2 Hours* Wrote status report and submitted to moode and project supervisor
