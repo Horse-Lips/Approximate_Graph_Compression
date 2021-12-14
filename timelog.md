@@ -106,3 +106,4 @@
 * *1 Hour* Created new graph and tested compression on personal machine, took too long to terminate :(
 * *1 Hour* Read details of greedy maximum independent set approximation algorithm
 * *2 Hours* Implemented approx algorithm for maximum independent set of non-terminals
+* *1.5 Hours* Began separating sparsifier class and packages into individual classes for each sparsification method

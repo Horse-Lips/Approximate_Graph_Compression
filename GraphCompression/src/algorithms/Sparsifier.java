@@ -71,9 +71,8 @@ public class Sparsifier {
 	 * @param startIndex, Vertex that must be a terminal (Usually start Vertex in shortest path
 	 * @param numTerminals, number of Vertices to set as terminals
 	 */
-	public void randomTerminals(int startIndex, int numTerminals) {
+	public void randomTerminals(int numTerminals) {
 		Set<Integer> terminalSet = new HashSet<Integer>();	//Create a new set containing the startIndex or must have Vertex index (Usually start of shortest path)
-		terminalSet.add(startIndex);
 		
 		for (int terminalCount = 0; terminalCount < numTerminals;) {
 			int rand = (int) (Math.random() * this.G.size());
