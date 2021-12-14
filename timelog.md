@@ -99,3 +99,4 @@
 ### 13/12/2021
 * *0.5 Hours* Meeting with supervisor
 * *1.5 Hours* Read papers briefly on greedy independent set and Dijkstra's shortest path tree algorithm
+* * 2.5 Hours* Worked on dissertation implementation descriptions, considered issues that may arise in current implementation (see issues)
