@@ -107,3 +107,6 @@
 * *1 Hour* Read details of greedy maximum independent set approximation algorithm
 * *2 Hours* Implemented approx algorithm for maximum independent set of non-terminals
 * *1.5 Hours* Began separating sparsifier class and packages into individual classes for each sparsification method
+
+### 15/12/2021
+* *2.5 Hours* Finished separating sparsifiers into individual classes, added independent set functionality, fixed issues with it not working properly

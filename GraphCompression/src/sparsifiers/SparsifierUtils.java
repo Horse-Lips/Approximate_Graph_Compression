@@ -56,7 +56,7 @@ public class SparsifierUtils {
 	 * Determines the (approximate) maximum independent set of all non-deactivated non-terminals.
 	 * @return S, the independent set of non-terminals
 	 */
-	public ArrayList<Integer> indSet(Integer[] terminalList, Graph G) {
+	public static ArrayList<Integer> indSet(Integer[] terminalList, Graph G) {
 		ArrayList<Integer> S = new ArrayList<Integer>();
 		
 		SimpleQueuePrio<Integer> nonTerms = getNonTermQueue(terminalList, G);
@@ -64,10 +64,8 @@ public class SparsifierUtils {
 		
 		while ((currentVert = nonTerms.pop()) != null) {
 			S.add(currentVert);
-			G.getVertex(currentVert).deactivate();
 			
 			for (int i: G.getVertex(currentVert).getAdj().keySet()) {
-				System.out.print("Removing: " + i + " from " + currentVert + "\n");
 				nonTerms.remove(i);
 			}
 		}

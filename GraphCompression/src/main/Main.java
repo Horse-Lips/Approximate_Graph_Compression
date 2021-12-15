@@ -5,7 +5,7 @@ import java.io.IOException;
 
 import graphComponents.Graph;
 import graphUtils.General;
-
+import sparsifiers.approximate.RandomEdgeContraction;
 import sparsifiers.exact.DijkstraSPTree;
 import sparsifiers.exact.GaussianElimination;
 
@@ -15,7 +15,7 @@ public class Main {
 		String file = "C:/Users/CallM/Documents/Life/UniGlasgow/Year4/Project/Code/exampleGraph1.txt";
 		
 		//Load file
-		Graph G1 = General.fromFile(file);
+		/*Graph G1 = General.fromFile(file);
 		Graph G2 = General.fromFile(file);
 		
 		//Get random terminal set
@@ -37,6 +37,30 @@ public class Main {
 		//Compress G2
 		System.out.println(G2);
 		dijSparsifier.sparsify();
+		System.out.println(G2);*/
+		
+		
+		//Comparisons of REC with and without independent set
+		Graph G1 = General.fromFile(file);
+		Graph G2 = General.fromFile(file);
+		
+		Integer[] terminals = sparsifiers.SparsifierUtils.randomTerminals(G1, 3);
+		
+		RandomEdgeContraction sparsREC1 = new RandomEdgeContraction(G1);
+		RandomEdgeContraction sparsREC2 = new RandomEdgeContraction(G2);
+		sparsREC2.useIndSet(true);
+		
+		sparsREC1.setTerminals(terminals);
+		sparsREC2.setTerminals(terminals);
+		
+		System.out.println(G1);
+		sparsREC1.sparsify();
+		System.out.println(G1);
+		
+		
 		System.out.println(G2);
+		sparsREC2.sparsify();
+		System.out.println(G2);
+		
 	}
 }
