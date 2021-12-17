@@ -110,3 +110,6 @@
 
 ### 15/12/2021
 * *2.5 Hours* Finished separating sparsifiers into individual classes, added independent set functionality, fixed issues with it not working properly
+
+### 16/12/2021
+* *7.5 Hours* Minor tests, read paper on dijkstra minors a bit more, worked on dissertation: added to intro and subsections, added figures, completely rewrote section on gaussian elimination
