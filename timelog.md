@@ -113,3 +113,6 @@
 
 ### 16/12/2021
 * *7.5 Hours* Minor tests, read paper on dijkstra minors a bit more, worked on dissertation: added to intro and subsections, added figures, completely rewrote section on gaussian elimination
+
+### 18/12/2021
+* * 5 Hours* Updated definitions section to be more general definitions of graph theory terms. Some changes to intro and section describing Gaussian elimination algorithm. Began writing description of REC algorithm. Searched for and read papers/chapters describing details of alias method sampling + edge contractions etc.
