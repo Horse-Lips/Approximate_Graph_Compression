@@ -116,3 +116,7 @@
 
 ### 18/12/2021
 * * 5 Hours* Updated definitions section to be more general definitions of graph theory terms. Some changes to intro and section describing Gaussian elimination algorithm. Began writing description of REC algorithm. Searched for and read papers/chapters describing details of alias method sampling + edge contractions etc.
+
+## Week 13
+### 06/01/2022
+* *2.5 Hours* Looked for and read some papers on the alias sampling method
