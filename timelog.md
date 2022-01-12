@@ -120,3 +120,6 @@
 ## Week 13
 ### 06/01/2022
 * *2.5 Hours* Looked for and read some papers on the alias sampling method
+
+### 12/01/2022
+* *2 Hours* Re-read and wrote critical summary of Graph Theory and Gaussian Elimination by Robert Tarjan (1975)
