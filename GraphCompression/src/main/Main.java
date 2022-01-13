@@ -3,64 +3,46 @@ package main;
 
 import java.io.IOException;
 
+import algorithms.Sparsifier;
 import graphComponents.Graph;
 import graphUtils.General;
-import sparsifiers.approximate.RandomEdgeContraction;
-import sparsifiers.exact.DijkstraSPTree;
-import sparsifiers.exact.GaussianElimination;
 
 
 public class Main {
 	public static void main(String[] args) throws IOException {
 		String file = "C:/Users/CallM/Documents/Life/UniGlasgow/Year4/Project/Code/exampleGraph1.txt";
 		
+		
 		//Load file
-		/*Graph G1 = General.fromFile(file);
-		Graph G2 = General.fromFile(file);
-		
-		//Get random terminal set
-		Integer[] terminals = sparsifiers.SparsifierUtils.randomTerminals(G1, 3);
-		
-		//Create a Gaussian elimination sparsifier and set its terminal list
-		GaussianElimination gaussSparsifier = new GaussianElimination(G1);
-		gaussSparsifier.setTerminals(terminals);
-		
-		//Create Dijkstra Shortest Path Tree sparsifier and set its terminal list
-		DijkstraSPTree dijSparsifier = new DijkstraSPTree(G2);
-		dijSparsifier.setTerminals(terminals);
-		
-		//Compress G1
-		System.out.println(G1);
-		gaussSparsifier.sparsify();
-		System.out.println(G1);
-		
-		//Compress G2
-		System.out.println(G2);
-		dijSparsifier.sparsify();
-		System.out.println(G2);*/
-		
-		
-		//Comparisons of REC with and without independent set
 		Graph G1 = General.fromFile(file);
 		Graph G2 = General.fromFile(file);
-		
-		Integer[] terminals = sparsifiers.SparsifierUtils.randomTerminals(G1, 3);
-		
-		RandomEdgeContraction sparsREC1 = new RandomEdgeContraction(G1);
-		RandomEdgeContraction sparsREC2 = new RandomEdgeContraction(G2);
-		sparsREC2.useIndSet(true);
-		
-		sparsREC1.setTerminals(terminals);
-		sparsREC2.setTerminals(terminals);
-		
-		System.out.println(G1);
-		sparsREC1.sparsify();
-		System.out.println(G1);
+		Graph G3 = General.fromFile(file);
 		
 		
-		System.out.println(G2);
-		sparsREC2.sparsify();
-		System.out.println(G2);
+		//Create a sparsifier for each Graph
+		Sparsifier REC = new Sparsifier(G1);
 		
+		Sparsifier Gauss = new Sparsifier(G2);
+		Gauss.setMethod("gauss");
+		
+		Sparsifier SP = new Sparsifier(G3);
+		SP.setMethod("sptree");
+		
+		
+		//Generate a random terminal set
+		REC.randomTerminals(3);
+		
+		
+		//Set all sparsifiers to use the same terminal set
+		Integer[] terminals = REC.getTerminals();
+		
+		Gauss.setTerminals(terminals);
+		SP.setTerminals(terminals);
+		
+		
+		//Sparsify each graph using the chosen method
+		REC.sparsify(true);
+		Gauss.sparsify(true);
+		SP.sparsify(true);
 	}
 }

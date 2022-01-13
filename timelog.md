@@ -124,3 +124,7 @@
 ### 12/01/2022
 * *2 Hours* Re-read and wrote critical summary of Graph Theory and Gaussian Elimination by Robert Tarjan (1975)
 * *2 Hours* Read and wrote critical summary of Compression of Weighted Graphs by Tiovonen H and Zhou F et. al. (2011) (To be completed)
+
+### 13/01/2022
+* *1 Hour* Finished critical summary of Compression of Weighted Graphs (2011) from yesterday
+* *4 Hours* Read and wrote critical summary of Preserving Terminal Distances Using Graph Minor (2018)
