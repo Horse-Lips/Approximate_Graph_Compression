@@ -29,6 +29,18 @@ public class Sparsifier {
 	/** List of indexes of terminal Vertices */
 	private Integer[] terminalList;
 	
+	
+	/** Stpres shortest path lengths from each terminal to each other terminal */
+	private double[][] pathLengths = null;
+	
+	
+	/** The time that sparsification started */
+	private long startTime;
+	
+	/** The time that sparsification ended */
+	private long endTime;
+	
+	
 	public Sparsifier(Graph G) {
 		this.G      = G;
 		this.method = "";
@@ -41,6 +53,26 @@ public class Sparsifier {
 	 */
 	public void setMethod(String method) {
 		this.method = method;
+	}
+	
+	
+	/**
+	 * Returns the method that this sparsifier has been set to
+	 * @return a string of the name of the sparsification method being used
+	 */
+	public String getMethod() {
+		if (this.method == "gauss") {
+			return "Gaussian Elimination";
+			
+		} else if (this.method == "sptree") {
+			return "Shortest Path Tree";
+		
+		} else if (this.method == "random") {
+			return "Random Selection";
+			
+		} else {
+			return "Random Edge Contractions";
+		}
 	}
 	
 	
@@ -133,16 +165,17 @@ public class Sparsifier {
 	
 	
 	/**
-	 * Carries out Vertex sparsification based on the method field. Defaults to random edge contractions based on edge weight probabilities.
-	 * Setting this.method to "gauss" will cause this function to use Gaussian elimination to eliminate Vertices from the Graph.
-	 * Setting qualityCheck to true will cause the algorithm to assess the quality of the sparsifier.
-	 * @param qualityCheck
+	 * Performs a quality check of the compressed graph. If initial
+	 * is set to true then an initial path lengths matrix consisting
+	 * of shortest path lengths between terminals is constructed. If
+	 * initial is set to false then a quality matrix is constructed
+	 * and printed showing the quality of the compression.
+	 * 
+	 * @param initial, true if the graph has not been compressed, false otherwise
 	 */
-	public void sparsify(boolean qualityCheck) {
-		double[][] pathLengths = null;	//Stores shortest path lengths from each terminal to each terminal
-		
-		if (qualityCheck) {
-			pathLengths = new double[terminalList.length][terminalList.length];	//Initialise 2d array of matrix of path lengths
+	private void checkQuality(boolean initial) {
+		if (initial) {
+			this.pathLengths = new double[terminalList.length][terminalList.length];	//Initialise 2d array of matrix of path lengths
 			
 			for (int i = 0; i < terminalList.length; i++) {		//Iterate over "start positions" in shortest path
 				int currentTermIndex = this.terminalList[i];	//Index of current "start position" (index of a Vertex)
@@ -155,82 +188,93 @@ public class Sparsifier {
 					pathLengths[i][j] = this.G.getVertex(pathTermIndex).getPathLength();	//Store shortest paths to each terminal Vertex
 				}
 			}
+		
+		} else {
+				double[][] qualityMatrix = new double[terminalList.length][terminalList.length];	//Initialise 2d array of matrix of qualities
+				
+				for (int i = 0; i < terminalList.length; i++) {		//Iterate over "start positions" in shortest path
+					int currentTermIndex = this.terminalList[i];	//Index of current "start position" (index of a Vertex)
+					
+					this.G.dijkstra(currentTermIndex);	//Compute shortest path from terminal to each Vertex
+					
+					for (int j = 0; j < terminalList.length; j++) {
+						int pathTermIndex = this.terminalList[j];	//Terminal at the "other end" of a path from the starting terminal
+						
+						qualityMatrix[i][j] = (i != j) ? this.G.getVertex(pathTermIndex).getPathLength() / pathLengths[i][j] : 0;	//Add new shortest path length divided by original shortest path length, 0 if diagonal
+					}
+				}
+				
+				System.out.println(this.getMethod());
+				System.out.println("Time taken: " + ((this.endTime - this.startTime) / 1000000000.0) + "s");
+				
+				for (int termIndex = 0; termIndex < terminalList.length; termIndex++) {
+					String currentLine = "Terminal " + termIndex + " (Vertex " + terminalList[termIndex] + ") ";
+					
+					for (double quality: qualityMatrix[termIndex]) {
+						currentLine += (quality + " ");
+					}
+					
+					System.out.println(currentLine);
+				}
+				
+				System.out.println("\n");
 		}
+
+	}
+	
+	
+	/**
+	 * Carries out Vertex sparsification based on the method field. Defaults to random edge contractions based on edge weight probabilities.
+	 * Setting this.method to "gauss" will cause this function to use Gaussian elimination to eliminate Vertices from the Graph.
+	 * Setting qualityCheck to true will cause the algorithm to assess the quality of the sparsifier.
+	 * @param qualityCheck
+	 */
+	public void sparsify(boolean qualityCheck) {
 		
-		SimpleQueuePrio<Integer> nonTermQueue = this.getNonTermQueue();
+		if (qualityCheck) { checkQuality(true); }	//If qualityCheck is true perform initial step locating shortest paths between terminals
 		
-		long startTime = System.nanoTime();
-		long endTime   = System.nanoTime();
-		Integer currentVertIndex;
+		SimpleQueuePrio<Integer> nonTermQueue = this.getNonTermQueue();	//Get all non-terminals as a priority queue ordered by degree of vertex
+		Integer currentVertIndex;										//Index of the vertex currently being removed from the graph
 		
-		if (this.method == "gauss") {
-			startTime = System.nanoTime();
+		if (this.method == "gauss") {	//Carry out removal of vertices using Gaussian elimination method
+			this.startTime = System.nanoTime();
 			
-			while ((currentVertIndex = nonTermQueue.pop()) != null) {
-				this.Gauss(currentVertIndex);
-			}
+			while ((currentVertIndex = nonTermQueue.pop()) != null) { this.eliminate(currentVertIndex); }
 			
-			endTime = System.nanoTime();
+			this.endTime = System.nanoTime();
 		
-		} else if (this.method == "sptree") {
-			startTime = System.nanoTime();
+		} else if (this.method == "sptree") {	//Cary out elimination of vertices using shortest path tree method
+			this.startTime = System.nanoTime();
 			
 			this.SPTree();
 			
-			endTime = System.nanoTime();
-			
-		} else {
-			startTime = System.nanoTime();
+			this.endTime = System.nanoTime();
+		
+		} else if (this.method == "random") {
+			this.startTime = System.nanoTime();
 			
 			while ((currentVertIndex = nonTermQueue.pop()) != null) {
-				this.contract(currentVertIndex);
-			}
-			
-			endTime = System.nanoTime();
-			
-		}
-		
-		
-		if (qualityCheck) {
-			
-			double[][] qualityMatrix = new double[terminalList.length][terminalList.length];	//Initialise 2d array of matrix of qualities
-			
-			for (int i = 0; i < terminalList.length; i++) {		//Iterate over "start positions" in shortest path
-				int currentTermIndex = this.terminalList[i];	//Index of current "start position" (index of a Vertex)
-				
-				this.G.dijkstra(currentTermIndex);	//Compute shortest path from terminal to each Vertex
-				
-				for (int j = 0; j < terminalList.length; j++) {
-					int pathTermIndex = this.terminalList[j];	//Terminal at the "other end" of a path from the starting terminal
+				if (Math.random() < 0.5) {
+					this.eliminate(currentVertIndex);	//If random less than 0.5 choose gaussian elimination method
 					
-					qualityMatrix[i][j] = (i != j) ? this.G.getVertex(pathTermIndex).getPathLength() / pathLengths[i][j] : 0;	//Add new shortest path length divided by original shortest path length, 0 if diagonal
+				} else {
+					this.REC(currentVertIndex);			//Otherwise choose REC method
+					
 				}
 			}
 			
-			if (this.method == "gauss") {
-				System.out.println("-- Gaussian Elimination --");
-				
-			} else if (this.method == "sptree") {
-				System.out.println("-- Shortest Path Tree --");
-				
-			} else {
-				System.out.println("-- Random Edge Contractions --");
-			}
+			this.endTime = System.nanoTime();
 			
-			System.out.println("Time taken: " + ((endTime - startTime) / 1000000000.0) + "s");
+		} else {								//Default to REC method
+			this.startTime = System.nanoTime();
 			
-			for (int termIndex = 0; termIndex < terminalList.length; termIndex++) {
-				String currentLine = "Terminal " + termIndex + " (Vertex " + terminalList[termIndex] + ") ";
-				
-				for (double quality: qualityMatrix[termIndex]) {
-					currentLine += (quality + " ");
-				}
-				
-				System.out.println(currentLine);
-			}
+			while ((currentVertIndex = nonTermQueue.pop()) != null) { this.REC(currentVertIndex); }
 			
-			System.out.println("\n");
+			this.endTime = System.nanoTime();
+			
 		}
+		
+		if (qualityCheck) { checkQuality(false); }	//Perform final step of quality check, calculating and displaying time taken and quality of compression
 	}
 	
 	
@@ -239,7 +283,7 @@ public class Sparsifier {
 	 * Creates edges between pairs of neighbours of v and selects minimum edge where duplicates exist.
 	 * @param vertIndex, the index of the Vertex to be removed
 	 */
-	private void Gauss(int toRemoveIndex) {
+	private void eliminate(int toRemoveIndex) {
 		Vertex toRemove;	//Vertex to be removed
 		
 		if (toRemoveIndex < 0 || toRemoveIndex >= G.size() || (toRemove = G.getVertex(toRemoveIndex)).isDeactivated()) {
@@ -273,7 +317,7 @@ public class Sparsifier {
 	 * The Vertex to be removed will be "merged" with some Vertex based on edge probability
 	 * @param toRemoveIndex
 	 */
-	private void contract(int toRemoveIndex) {
+	private void REC(int toRemoveIndex) {
 		Vertex toRemove;	//Vertex to be removed
 		
 		if (toRemoveIndex < 0 || toRemoveIndex >= G.size() || (toRemove = G.getVertex(toRemoveIndex)).isDeactivated()) {

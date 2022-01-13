@@ -17,6 +17,7 @@ public class Main {
 		Graph G1 = General.fromFile(file);
 		Graph G2 = General.fromFile(file);
 		Graph G3 = General.fromFile(file);
+		Graph G4 = General.fromFile(file);
 		
 		
 		//Create a sparsifier for each Graph
@@ -28,6 +29,9 @@ public class Main {
 		Sparsifier SP = new Sparsifier(G3);
 		SP.setMethod("sptree");
 		
+		Sparsifier random = new Sparsifier(G4);
+		random.setMethod("random");
+		
 		
 		//Generate a random terminal set
 		REC.randomTerminals(3);
@@ -38,11 +42,13 @@ public class Main {
 		
 		Gauss.setTerminals(terminals);
 		SP.setTerminals(terminals);
+		random.setTerminals(terminals);
 		
 		
 		//Sparsify each graph using the chosen method
 		REC.sparsify(true);
 		Gauss.sparsify(true);
 		SP.sparsify(true);
+		random.sparsify(true);
 	}
 }
