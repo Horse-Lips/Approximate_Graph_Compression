@@ -128,3 +128,4 @@
 ### 13/01/2022
 * *1 Hour* Finished critical summary of Compression of Weighted Graphs (2011) from yesterday
 * *4 Hours* Read and wrote critical summary of Preserving Terminal Distances Using Graph Minor (2018)
+* 1 Hour* Improvements and abstractions to sparsifier class, new sparsification method
