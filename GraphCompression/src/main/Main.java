@@ -10,7 +10,7 @@ import graphUtils.General;
 
 public class Main {
 	public static void main(String[] args) throws IOException {
-		String file = "C:/Users/CallM/Documents/Life/UniGlasgow/Year4/Project/Code/exampleGraph1.txt";
+		String file = "C:/Users/CallM/Documents/Life/UniGlasgow/Year4/Project/Code/exampleGraph3.txt";
 		
 		
 		//Load file
@@ -22,6 +22,7 @@ public class Main {
 		
 		//Create a sparsifier for each Graph
 		Sparsifier REC = new Sparsifier(G1);
+		REC.setUseIndSet(true);
 		
 		Sparsifier Gauss = new Sparsifier(G2);
 		Gauss.setMethod("gauss");
@@ -34,7 +35,7 @@ public class Main {
 		
 		
 		//Generate a random terminal set
-		REC.randomTerminals(3);
+		REC.randomTerminals(10);
 		
 		
 		//Set all sparsifiers to use the same terminal set

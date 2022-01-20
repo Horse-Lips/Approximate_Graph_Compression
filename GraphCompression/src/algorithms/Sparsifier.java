@@ -26,11 +26,16 @@ public class Sparsifier {
 	/** Contraction method, initially blank, can be set to "gauss" for Gaussian elimination */
 	private String method;
 	
+	/** The percentage of non-terminals to contract before stopping. Values may be 25, 50, and 75. */
+	private int earlyStopping;
+	
 	/** List of indexes of terminal Vertices */
 	private Integer[] terminalList;
 	
+	/** Whether or not to use the independent set for the REC algorithm */
+	private boolean useIndSet = false;
 	
-	/** Stpres shortest path lengths from each terminal to each other terminal */
+	/** Stores shortest path lengths from each terminal to each other terminal */
 	private double[][] pathLengths = null;
 	
 	
@@ -44,6 +49,7 @@ public class Sparsifier {
 	public Sparsifier(Graph G) {
 		this.G      = G;
 		this.method = "";
+		this.earlyStopping = 0;
 	}
 	
 	
@@ -71,8 +77,35 @@ public class Sparsifier {
 			return "Random Selection";
 			
 		} else {
-			return "Random Edge Contractions";
+			if (this.useIndSet) {
+				return "Random Edge Contractions with Independent Set";
+				
+			} else if (this.earlyStopping != 0) {
+				return "Random Edge Contractions with Early Stopping After " + this.earlyStopping + "%";
+				
+			} else {
+				return "Random Edge Contractions";
+				
+			}
 		}
+	}
+	
+	
+	/**
+	 * Use the early stopping version of REC with the given percentage of non-terminals being contracted
+	 * @param i, the percentage of non-terminals to contract
+	 */
+	public void setEarlyStopping(int i) {
+		this.earlyStopping = i;
+	}
+	
+	
+	/**
+	 * Enable or disable the use of independent set non-terminal contractions in the REC algorithm
+	 * @param b, true if REC should use the independent set, false otherwise
+	 */
+	public void setUseIndSet(boolean b) {
+		this.useIndSet = b;
 	}
 	
 	
@@ -124,19 +157,19 @@ public class Sparsifier {
 	 * Determines the (approximate) maximum independent set of all non-deactivated non-terminals.
 	 * @return S, the independent set of non-terminals
 	 */
-	public ArrayList<Integer> indSet() {
-		ArrayList<Integer> S = new ArrayList<Integer>();
+	private ArrayList<Integer> indSet() {
+		ArrayList<Integer> S = new ArrayList<Integer>();			//Stores the independent set
 		
-		SimpleQueuePrio<Integer> nonTerms = this.getNonTermQueue();
+		SimpleQueuePrio<Integer> nonTerms = this.getNonTermQueue();	//Priority queue of non-terminals
 		Integer currentVert;
 		
-		while ((currentVert = nonTerms.pop()) != null) {
-			S.add(currentVert);
-			this.G.getVertex(currentVert).deactivate();
+		while ((currentVert = nonTerms.pop()) != null) {	//Get each vertex from min to max degree
+			S.add(currentVert);							//Add vertex to set
+			this.G.getVertex(currentVert).deactivate();	//Deactivate the vertex in G
 			
 			for (int i: this.G.getVertex(currentVert).getAdj().keySet()) {
-				System.out.print("Removing: " + i + " from " + currentVert + "\n");
-				nonTerms.remove(i);
+				//System.out.print("Removing: " + i + " from " + currentVert + "\n");
+				nonTerms.remove(i);	//Remove each of the neighbours of the vertex from the queue
 			}
 		}
 		
@@ -268,10 +301,30 @@ public class Sparsifier {
 		} else {								//Default to REC method
 			this.startTime = System.nanoTime();
 			
-			while ((currentVertIndex = nonTermQueue.pop()) != null) { this.REC(currentVertIndex); }
+			if (this.earlyStopping != 0) {
+				int maxContractions = (int) (this.G.size() / (100 / this.earlyStopping));	//Calculate how many non-terminals to contract before early stopping
+				int i = 0;
+				
+				while (i < maxContractions && (currentVertIndex = nonTermQueue.pop()) != null) { this.REC(currentVertIndex); i++;}
+				
+				
+			} else { 
+				if (this.useIndSet) {
+					ArrayList<Integer> currentSet;
+					
+					while (!(currentSet = this.indSet()).isEmpty()) {
+						for (int i: currentSet) {
+							this.REC(i);
+						}
+					}
+					
+				} else {
+					while ((currentVertIndex = nonTermQueue.pop()) != null) { this.REC(currentVertIndex); }
+				}
+				
+			}
 			
 			this.endTime = System.nanoTime();
-			
 		}
 		
 		if (qualityCheck) { checkQuality(false); }	//Perform final step of quality check, calculating and displaying time taken and quality of compression

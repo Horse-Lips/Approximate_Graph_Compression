@@ -129,3 +129,12 @@
 * *1 Hour* Finished critical summary of Compression of Weighted Graphs (2011) from yesterday
 * *4 Hours* Read and wrote critical summary of Preserving Terminal Distances Using Graph Minor (2018)
 * 1 Hour* Improvements and abstractions to sparsifier class, new sparsification method
+
+## Week 14
+### 17/01/2022
+* *0.5 Hours* Meeting with supervisor
+
+### 20/01/2022
+* *2 Hours* Implemented and tested early stopping and independent set methods
+* *1 Hour* Planned experiments to be conducted with each aslgorithm
+* *1 Hour* Constructed smaller graphs from the provided database
