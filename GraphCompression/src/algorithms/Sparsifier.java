@@ -381,7 +381,7 @@ public class Sparsifier {
 		Vertex superNode = G.getVertex(superNodeIndex);		//Get superNode (This will be the Vertex that toRemove is "merged" into)
 		
 		double removedEdgeWeight = superNode.getFromAdj(toRemoveIndex);
-		
+				
 		superNode.removeFromAdj(toRemoveIndex);				//Remove edge between superNode and toRemove
 		toRemove.removeFromAdj(superNodeIndex);
 		

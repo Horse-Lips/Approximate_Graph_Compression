@@ -138,3 +138,10 @@
 * *2 Hours* Implemented and tested early stopping and independent set methods
 * *1 Hour* Planned experiments to be conducted with each aslgorithm
 * *1 Hour* Constructed smaller graphs from the provided database
+
+### 23/01/2022
+* *2 Hours* Looked further into the large graph database and began implementing algorithm for constructing large graphs using the database files
+
+## Week 15
+### 24/01/2022
+* *1 Hour* Finished implementing function for reading in large graph files from SNAP database
