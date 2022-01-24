@@ -145,3 +145,5 @@
 ## Week 15
 ### 24/01/2022
 * *1 Hour* Finished implementing function for reading in large graph files from SNAP database
+* *0.5 Hours* Meeting with supervisor
+* *0.5 Hours* Refined quality checks to report average and worst quality

@@ -11,7 +11,10 @@ import graphUtils.General;
 public class Main {
 	public static void main(String[] args) throws IOException {
 		//String file = "C:/Users/CallM/Documents/Life/UniGlasgow/Year4/Project/Code/exampleGraph3.txt";
-		String file = "C:/Users/CallM/Documents/Life/UniGlasgow/Year4/Project/SNAP graphs/Autonomous Systems/as19971108.txt";
+		//String file = "C:/Users/CallM/Documents/Life/UniGlasgow/Year4/Project/SNAP graphs/Autonomous Systems/as19971108.txt";		//3000 Node graph
+		String file = "C:/Users/CallM/Documents/Life/UniGlasgow/Year4/Project/SNAP graphs/Autonomous Systems/as20000102.txt";		//6500 Node graph
+		//String file = "C:/Users/CallM/Documents/Life/UniGlasgow/Year4/Project/SNAP graphs/Road Networks/Texas/roadNet-TX.txt";	//1.3M node graph
+		
 		
 		//Load file
 		Graph G1 = General.fromSNAPFile(file);
@@ -22,7 +25,7 @@ public class Main {
 		
 		//Create a sparsifier for each Graph
 		Sparsifier REC = new Sparsifier(G1);
-		//REC.setUseIndSet(true);
+		REC.setUseIndSet(true);
 		
 		Sparsifier Gauss = new Sparsifier(G2);
 		Gauss.setMethod("gauss");

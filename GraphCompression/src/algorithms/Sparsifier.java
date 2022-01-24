@@ -223,7 +223,10 @@ public class Sparsifier {
 			}
 		
 		} else {
-				double[][] qualityMatrix = new double[terminalList.length][terminalList.length];	//Initialise 2d array of matrix of qualities
+				double worstQuality = 0;
+				double avgQuality   = 0;
+				
+				int total = 0;
 				
 				for (int i = 0; i < terminalList.length; i++) {		//Iterate over "start positions" in shortest path
 					int currentTermIndex = this.terminalList[i];	//Index of current "start position" (index of a Vertex)
@@ -233,22 +236,25 @@ public class Sparsifier {
 					for (int j = 0; j < terminalList.length; j++) {
 						int pathTermIndex = this.terminalList[j];	//Terminal at the "other end" of a path from the starting terminal
 						
-						qualityMatrix[i][j] = (i != j) ? this.G.getVertex(pathTermIndex).getPathLength() / pathLengths[i][j] : 0;	//Add new shortest path length divided by original shortest path length, 0 if diagonal
+						if (i != j) {
+							double quality = this.G.getVertex(pathTermIndex).getPathLength() / pathLengths[i][j];
+							
+							avgQuality += quality;
+							total++;
+							
+							worstQuality = (quality > worstQuality) ? quality : worstQuality;
+						}
+						
 					}
 				}
+				
+				avgQuality = (avgQuality / total);
 				
 				System.out.println(this.getMethod());
 				System.out.println("Time taken: " + ((this.endTime - this.startTime) / 1000000000.0) + "s");
 				
-				for (int termIndex = 0; termIndex < terminalList.length; termIndex++) {
-					String currentLine = "Terminal " + termIndex + " (Vertex " + terminalList[termIndex] + ") ";
-					
-					for (double quality: qualityMatrix[termIndex]) {
-						currentLine += (quality + " ");
-					}
-					
-					System.out.println(currentLine);
-				}
+				System.out.println("Worst quality: " + worstQuality);
+				System.out.println("Average quality: " + avgQuality);
 				
 				System.out.println("\n");
 		}

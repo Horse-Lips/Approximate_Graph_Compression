@@ -85,8 +85,10 @@ public class General {
 			int from = converter.get(Integer.parseInt(splitLine[0]));
 			int to   = converter.get(Integer.parseInt(splitLine[1]));
 			
+			int weight = 1;
+			
 			if (from != to) {
-				newGraph.getVertex(from).addToAdj(to, 1);
+				newGraph.getVertex(from).addToAdj(to, weight);
 			}
 			
 		}
