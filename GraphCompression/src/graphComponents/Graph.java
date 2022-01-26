@@ -55,6 +55,22 @@ public class Graph {
 
 	
 	/**
+	 * Gets the size of a graph after compression, that being the amount of un-deactivated nodes in the graph
+	 * @return
+	 */
+	public int compressedSize() {
+		int count = 0;
+		
+		for (Vertex v: this.vertList) {
+			if (!v.isDeactivated()) {
+				count++;
+			}
+		}
+		
+		return count;
+	}
+	
+	/**
 	 * Carries out Dijkstra's shortest path algorithm using a priority queue
 	 * @param startIndex, the index of the Vertex to start the search from
 	 */

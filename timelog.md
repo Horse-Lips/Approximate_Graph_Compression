@@ -147,3 +147,9 @@
 * *1 Hour* Finished implementing function for reading in large graph files from SNAP database
 * *0.5 Hours* Meeting with supervisor
 * *0.5 Hours* Refined quality checks to report average and worst quality
+
+### 25/01/2022
+* *1 Hour* Obtained larger graph, added to timings and quality checks
+
+### 26/01/2022
+* *2.5 Hours* Modified quality checks slightly and also independent set algorithm

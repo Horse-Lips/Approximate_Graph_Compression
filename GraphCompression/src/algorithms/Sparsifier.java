@@ -165,7 +165,7 @@ public class Sparsifier {
 		
 		while ((currentVert = nonTerms.pop()) != null) {	//Get each vertex from min to max degree
 			S.add(currentVert);							//Add vertex to set
-			this.G.getVertex(currentVert).deactivate();	//Deactivate the vertex in G
+			//this.G.getVertex(currentVert).deactivate();	//Deactivate the vertex in G
 			
 			for (int i: this.G.getVertex(currentVert).getAdj().keySet()) {
 				//System.out.print("Removing: " + i + " from " + currentVert + "\n");
@@ -174,6 +174,22 @@ public class Sparsifier {
 		}
 		
 		return S;
+	}
+	
+	
+	/**
+	 * Returns the path lengths matrix created during the quality check stage
+	 */
+	public double[][] getPathLengths() {
+		return this.pathLengths;
+	}
+	
+	
+	/**
+	 * Sets the path lengths matrix to avoid repeated computation
+	 */
+	public void setPathLengths(double[][] pathLengths) {
+		this.pathLengths = pathLengths;
 	}
 	
 	
@@ -208,6 +224,8 @@ public class Sparsifier {
 	 */
 	private void checkQuality(boolean initial) {
 		if (initial) {
+			if (this.pathLengths != null) { return; }	//Return if path lengths matrix already set
+			
 			this.pathLengths = new double[terminalList.length][terminalList.length];	//Initialise 2d array of matrix of path lengths
 			
 			for (int i = 0; i < terminalList.length; i++) {		//Iterate over "start positions" in shortest path
@@ -223,40 +241,47 @@ public class Sparsifier {
 			}
 		
 		} else {
-				double worstQuality = 0;
-				double avgQuality   = 0;
+			long qualityStartTime, qualityEndTime;
+			
+			qualityStartTime = System.nanoTime();
+			
+			double worstQuality = 0;
+			double avgQuality   = 0;
+			
+			int total = 0;
+			
+			for (int i = 0; i < terminalList.length; i++) {		//Iterate over "start positions" in shortest path
+				int currentTermIndex = this.terminalList[i];	//Index of current "start position" (index of a Vertex)
 				
-				int total = 0;
+				this.G.dijkstra(currentTermIndex);	//Compute shortest path from terminal to each Vertex
 				
-				for (int i = 0; i < terminalList.length; i++) {		//Iterate over "start positions" in shortest path
-					int currentTermIndex = this.terminalList[i];	//Index of current "start position" (index of a Vertex)
+				for (int j = 0; j < terminalList.length; j++) {
+					int pathTermIndex = this.terminalList[j];	//Terminal at the "other end" of a path from the starting terminal
 					
-					this.G.dijkstra(currentTermIndex);	//Compute shortest path from terminal to each Vertex
-					
-					for (int j = 0; j < terminalList.length; j++) {
-						int pathTermIndex = this.terminalList[j];	//Terminal at the "other end" of a path from the starting terminal
+					if (i != j) {
+						double quality = this.G.getVertex(pathTermIndex).getPathLength() / pathLengths[i][j];
 						
-						if (i != j) {
-							double quality = this.G.getVertex(pathTermIndex).getPathLength() / pathLengths[i][j];
-							
-							avgQuality += quality;
-							total++;
-							
-							worstQuality = (quality > worstQuality) ? quality : worstQuality;
-						}
+						avgQuality += quality;
+						total++;
 						
+						worstQuality = (quality > worstQuality) ? quality : worstQuality;
 					}
+					
 				}
-				
-				avgQuality = (avgQuality / total);
-				
-				System.out.println(this.getMethod());
-				System.out.println("Time taken: " + ((this.endTime - this.startTime) / 1000000000.0) + "s");
-				
-				System.out.println("Worst quality: " + worstQuality);
-				System.out.println("Average quality: " + avgQuality);
-				
-				System.out.println("\n");
+			}
+			
+			avgQuality = (avgQuality / total);
+			
+			qualityEndTime = System.nanoTime();
+			System.out.println("Final quality checks: " + ((qualityEndTime - qualityStartTime) / 1000000000.0) + "s");
+			
+			System.out.println("Time taken to compress graph: " + ((this.endTime - this.startTime) / 1000000000.0) + "s");
+			System.out.println("Resulting graph size: " + this.G.compressedSize());
+			
+			System.out.println("Worst quality: " + worstQuality);
+			System.out.println("Average quality: " + avgQuality);
+			
+			System.out.println("\n");
 		}
 
 	}
@@ -268,11 +293,22 @@ public class Sparsifier {
 	 * Setting qualityCheck to true will cause the algorithm to assess the quality of the sparsifier.
 	 * @param qualityCheck
 	 */
-	public void sparsify(boolean qualityCheck) {
+	public void sparsify() {
+		System.out.println("--- " + this.getMethod() + " ---");
 		
-		if (qualityCheck) { checkQuality(true); }	//If qualityCheck is true perform initial step locating shortest paths between terminals
+		this.startTime = System.nanoTime();
+		checkQuality(true);	//Perform initial quality check step locating shortest paths between terminals
+		this.endTime = System.nanoTime();
 		
+		System.out.println("Initial quality checks carried out in: " + ((this.endTime - this.startTime) / 1000000000.0) + "s");
+		
+		
+		this.startTime = System.nanoTime();
 		SimpleQueuePrio<Integer> nonTermQueue = this.getNonTermQueue();	//Get all non-terminals as a priority queue ordered by degree of vertex
+		this.endTime = System.nanoTime();
+		
+		System.out.println("Non-terminal queue created in: " + ((this.endTime - this.startTime) / 1000000000.0) + "s");
+		
 		Integer currentVertIndex;										//Index of the vertex currently being removed from the graph
 		
 		if (this.method == "gauss") {	//Carry out removal of vertices using Gaussian elimination method
@@ -292,15 +328,22 @@ public class Sparsifier {
 		} else if (this.method == "random") {
 			this.startTime = System.nanoTime();
 			
+			int elimCount = 0;
+			int RECCount  = 0;
+			
 			while ((currentVertIndex = nonTermQueue.pop()) != null) {
 				if (Math.random() < 0.5) {
 					this.eliminate(currentVertIndex);	//If random less than 0.5 choose gaussian elimination method
+					elimCount++;
 					
 				} else {
 					this.REC(currentVertIndex);			//Otherwise choose REC method
-					
+					RECCount++;
 				}
+				
 			}
+			
+			System.out.println("Used Gaussian elimination " + elimCount + " times and REC " + RECCount + " times");
 			
 			this.endTime = System.nanoTime();
 			
@@ -314,26 +357,30 @@ public class Sparsifier {
 				while (i < maxContractions && (currentVertIndex = nonTermQueue.pop()) != null) { this.REC(currentVertIndex); i++;}
 				
 				
-			} else { 
-				if (this.useIndSet) {
-					ArrayList<Integer> currentSet;
-					
-					while (!(currentSet = this.indSet()).isEmpty()) {
-						for (int i: currentSet) {
-							this.REC(i);
-						}
+			} else if (this.useIndSet) {
+				ArrayList<Integer> currentSet =  this.indSet();
+				
+				while (!currentSet.isEmpty()) {
+					for (int i: currentSet) {
+						this.REC(i);
 					}
 					
-				} else {
-					while ((currentVertIndex = nonTermQueue.pop()) != null) { this.REC(currentVertIndex); }
+					currentSet = this.indSet();
+							
+					//System.out.println("Indset done in: " + ((System.nanoTime() - this.startTime) / 1000000000.0) + "s");
 				}
+				
+				//checkQuality(false);
+					
+			} else {
+				while ((currentVertIndex = nonTermQueue.pop()) != null) { this.REC(currentVertIndex); }
 				
 			}
 			
 			this.endTime = System.nanoTime();
 		}
 		
-		if (qualityCheck) { checkQuality(false); }	//Perform final step of quality check, calculating and displaying time taken and quality of compression
+		checkQuality(false);	//Perform final step of quality check, calculating and displaying time taken and quality of compression
 	}
 	
 	
