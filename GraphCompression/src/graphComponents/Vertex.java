@@ -94,6 +94,10 @@ public class Vertex {
 	}
 	
 	
+	public boolean getAdjEmpty() {
+		return this.adjList.isEmpty();
+	}
+	
 	/**
 	 * Adds an edge between this Vertex and the Vertex represented by vertIndex
 	 * @param vertIndex, the index of the other Vertex in the edge

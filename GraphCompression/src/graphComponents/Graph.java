@@ -35,15 +35,28 @@ public class Graph {
 	 * @return the Vertex at index i
 	 */
 	public Vertex getVertex(int i) {
-		for (Vertex v: this.vertList) {
+		return this.vertList[i];
+		
+		/*for (Vertex v: this.vertList) {
 			if (i == v.getIndex()) {
 				return v;
 			}
 		}
 		
-		return null;
+		return null;*/
 	}
 	
+	
+	public void removeLoners() {
+		int count = 1;
+		for (Vertex v: this.vertList) {
+			if (v.getAdjEmpty()) {
+				count++;
+				v.deactivate();
+			}
+		}
+		System.out.println("Removed " + count + " loners");
+	}
 	
 	/**
 	 * Get the size of the Graph

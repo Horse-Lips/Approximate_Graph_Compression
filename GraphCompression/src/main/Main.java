@@ -11,24 +11,19 @@ import graphUtils.General;
 public class Main {
 	public static void main(String[] args) throws IOException {
 		//String file = "C:/Users/CallM/Documents/Life/UniGlasgow/Year4/Project/Code/exampleGraph3.txt";
-		//String file = "C:/Users/CallM/Documents/Life/UniGlasgow/Year4/Project/SNAP graphs/Autonomous Systems/as19971108.txt";		//3000 Node graph
-		//String file = "C:/Users/CallM/Documents/Life/UniGlasgow/Year4/Project/SNAP graphs/Autonomous Systems/as20000102.txt";		//6500 Node graph
-		String file = "C:/Users/CallM/Documents/Life/UniGlasgow/Year4/Project/SNAP graphs/Autonomous Systems/CAIDA Relationships/as-caida20071112.txt";	//26000 Node graph
-		//String file = "C:/Users/CallM/Documents/Life/UniGlasgow/Year4/Project/SNAP graphs/Road Networks/Texas/roadNet-TX.txt";	//1.3M node graph
+		//String file = "C:/Users/CallM/Documents/Life/UniGlasgow/Year4/Project/SNAP graphs/Autonomous Systems/as19971108.txt";		//3K Node graph
+		//String file = "C:/Users/CallM/Documents/Life/UniGlasgow/Year4/Project/SNAP graphs/Autonomous Systems/as20000102.txt";		//6.5K Node graph
+		//String file = "C:/Users/CallM/Documents/Life/UniGlasgow/Year4/Project/SNAP graphs/Autonomous Systems/CAIDA Relationships/as-caida20071112.txt";	//26K Node graph
+		//String file = "C:/Users/CallM/Documents/Life/UniGlasgow/Year4/Project/SNAP graphs/BrightKite/Brightkite_edges.txt";	//60K Node graph
+		//String file = "C:/Users/CallM/Documents/Life/UniGlasgow/Year4/Project/SNAP graphs/Gowalla/Gowalla_edges.txt";	//200K Node graph
+		String file = "C:/Users/CallM/Documents/Life/UniGlasgow/Year4/Project/SNAP graphs/Road Networks/Texas/roadNet-TX.txt";	//1.3M node graph
 		
 		
 		long startTime, endTime;
 		
 		//Load file
 		startTime = System.nanoTime();
-		Graph G1 = General.fromSNAPFile(file);
-		Graph G2 = General.fromSNAPFile(file);
-		Graph G3 = General.fromSNAPFile(file);
-		Graph G4 = General.fromSNAPFile(file);
-		Graph G5 = General.fromSNAPFile(file);
-		Graph G6 = General.fromSNAPFile(file);
-		Graph G7 = General.fromSNAPFile(file);
-		Graph G8 = General.fromSNAPFile(file);
+		Graph[] Graphs = General.fromSNAPFile(file, 8);
 		endTime = System.nanoTime();
 		
 		System.out.println("Graphs created in: " + ((endTime - startTime) / 1000000000.0) + "s");
@@ -36,27 +31,27 @@ public class Main {
 		
 		//Create a sparsifier for each Graph
 		startTime = System.nanoTime();
-		Sparsifier REC = new Sparsifier(G1);
+		Sparsifier REC = new Sparsifier(Graphs[0]);
 		
-		Sparsifier RECIndSet = new Sparsifier(G2);
+		Sparsifier RECIndSet = new Sparsifier(Graphs[1]);
 		RECIndSet.setUseIndSet(true);
 		
-		Sparsifier REC25 = new Sparsifier(G3);
+		Sparsifier REC25 = new Sparsifier(Graphs[2]);
 		REC25.setEarlyStopping(25);
 		
-		Sparsifier REC50 = new Sparsifier(G4);
+		Sparsifier REC50 = new Sparsifier(Graphs[3]);
 		REC50.setEarlyStopping(50);
 		
-		Sparsifier REC75 = new Sparsifier(G5);
+		Sparsifier REC75 = new Sparsifier(Graphs[4]);
 		REC75.setEarlyStopping(75);
 		
-		Sparsifier Gauss = new Sparsifier(G6);
+		Sparsifier Gauss = new Sparsifier(Graphs[5]);
 		Gauss.setMethod("gauss");
 		
-		Sparsifier SP = new Sparsifier(G7);
+		Sparsifier SP = new Sparsifier(Graphs[6]);
 		SP.setMethod("sptree");
 		
-		Sparsifier random = new Sparsifier(G8);
+		Sparsifier random = new Sparsifier(Graphs[7]);
 		random.setMethod("random");
 		endTime = System.nanoTime();
 		

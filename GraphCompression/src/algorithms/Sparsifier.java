@@ -178,22 +178,6 @@ public class Sparsifier {
 	
 	
 	/**
-	 * Returns the path lengths matrix created during the quality check stage
-	 */
-	public double[][] getPathLengths() {
-		return this.pathLengths;
-	}
-	
-	
-	/**
-	 * Sets the path lengths matrix to avoid repeated computation
-	 */
-	public void setPathLengths(double[][] pathLengths) {
-		this.pathLengths = pathLengths;
-	}
-	
-	
-	/**
 	 * Creates a priority queue containing all non-terminal vertices
 	 * @return a priority queue containing all non terminals
 	 */
@@ -210,6 +194,22 @@ public class Sparsifier {
 		}
 		
 		return nonTermQueue;
+	}
+	
+	
+	/**
+	 * Returns the path lengths matrix created during the quality check stage
+	 */
+	public double[][] getPathLengths() {
+		return this.pathLengths;
+	}
+	
+	
+	/**
+	 * Sets the path lengths matrix to avoid repeated computation
+	 */
+	public void setPathLengths(double[][] pathLengths) {
+		this.pathLengths = pathLengths;
 	}
 	
 	
@@ -296,60 +296,37 @@ public class Sparsifier {
 	public void sparsify() {
 		System.out.println("--- " + this.getMethod() + " ---");
 		
+		/*Perform initial quality checks, locating shortest paths between terminals if they have not been set already*/
 		this.startTime = System.nanoTime();
-		checkQuality(true);	//Perform initial quality check step locating shortest paths between terminals
+		checkQuality(true);
 		this.endTime = System.nanoTime();
 		
 		System.out.println("Initial quality checks carried out in: " + ((this.endTime - this.startTime) / 1000000000.0) + "s");
 		
 		
+		/*Create a priority queue containing all non-terminals ordered by vertex degree, lower vertex is higher priority*/
 		this.startTime = System.nanoTime();
-		SimpleQueuePrio<Integer> nonTermQueue = this.getNonTermQueue();	//Get all non-terminals as a priority queue ordered by degree of vertex
+		SimpleQueuePrio<Integer> nonTermQueue = this.getNonTermQueue();
 		this.endTime = System.nanoTime();
 		
 		System.out.println("Non-terminal queue created in: " + ((this.endTime - this.startTime) / 1000000000.0) + "s");
 		
-		Integer currentVertIndex;										//Index of the vertex currently being removed from the graph
 		
-		if (this.method == "gauss") {	//Carry out removal of vertices using Gaussian elimination method
-			this.startTime = System.nanoTime();
-			
+		Integer currentVertIndex;	//Index of the vertex currently being removed from the graph
+		
+		this.startTime = System.nanoTime();
+		
+		/*Carry out removal of non-terminals with the specified method*/
+		if (this.method == "gauss") {			//Gaussian elimination method
 			while ((currentVertIndex = nonTermQueue.pop()) != null) { this.eliminate(currentVertIndex); }
-			
-			this.endTime = System.nanoTime();
 		
-		} else if (this.method == "sptree") {	//Cary out elimination of vertices using shortest path tree method
-			this.startTime = System.nanoTime();
-			
+		} else if (this.method == "sptree") {	//Shortest path tree method
 			this.SPTree();
-			
-			this.endTime = System.nanoTime();
-		
-		} else if (this.method == "random") {
-			this.startTime = System.nanoTime();
-			
-			int elimCount = 0;
-			int RECCount  = 0;
-			
-			while ((currentVertIndex = nonTermQueue.pop()) != null) {
-				if (Math.random() < 0.5) {
-					this.eliminate(currentVertIndex);	//If random less than 0.5 choose gaussian elimination method
-					elimCount++;
 					
-				} else {
-					this.REC(currentVertIndex);			//Otherwise choose REC method
-					RECCount++;
-				}
-				
-			}
-			
-			System.out.println("Used Gaussian elimination " + elimCount + " times and REC " + RECCount + " times");
-			
-			this.endTime = System.nanoTime();
-			
-		} else {								//Default to REC method
-			this.startTime = System.nanoTime();
-			
+		} else if (this.method == "random") {	//Randomly choose between Gaussian elimination and REC methods
+			randomMethod(nonTermQueue);
+						
+		} else {								//Default to REC method			
 			if (this.earlyStopping != 0) {
 				int maxContractions = (int) (this.G.size() / (100 / this.earlyStopping));	//Calculate how many non-terminals to contract before early stopping
 				int i = 0;
@@ -364,23 +341,41 @@ public class Sparsifier {
 					for (int i: currentSet) {
 						this.REC(i);
 					}
-					
+										
 					currentSet = this.indSet();
-							
-					//System.out.println("Indset done in: " + ((System.nanoTime() - this.startTime) / 1000000000.0) + "s");
 				}
-				
-				//checkQuality(false);
 					
 			} else {
 				while ((currentVertIndex = nonTermQueue.pop()) != null) { this.REC(currentVertIndex); }
 				
 			}
-			
-			this.endTime = System.nanoTime();
 		}
 		
+		this.endTime = System.nanoTime();
+		
 		checkQuality(false);	//Perform final step of quality check, calculating and displaying time taken and quality of compression
+	}
+	
+	
+	private void randomMethod(SimpleQueuePrio<Integer> nonTermQueue) {
+		int elimCount = 0;
+		int RECCount  = 0;
+		
+		Integer currentVertIndex;
+		
+		while ((currentVertIndex = nonTermQueue.pop()) != null) {
+			if (Math.random() < 0.5) {
+				this.eliminate(currentVertIndex);	//If random less than 0.5 choose gaussian elimination method
+				elimCount++;
+				
+			} else {
+				this.REC(currentVertIndex);			//Otherwise choose REC method
+				RECCount++;
+			}
+			
+		}
+		
+		System.out.println("Used Gaussian elimination " + elimCount + " times and REC " + RECCount + " times");
 	}
 	
 	

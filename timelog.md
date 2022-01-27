@@ -153,3 +153,7 @@
 
 ### 26/01/2022
 * *2.5 Hours* Modified quality checks slightly and also independent set algorithm
+
+### 27/01/2020
+* *2 Hours* Fixed issues with independent set alg, reworked quality checks, obtained bigger file (200K nodes)
+* *2 Hours* More testing and tweaks to quality and some algorithms, better abstractions for neatness/readability, fixed some slow parts of the code such as vertex retrieval

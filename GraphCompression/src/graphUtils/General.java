@@ -43,18 +43,29 @@ public class General {
 	}
 	
 	
-	public static Graph fromSNAPFile(String filename) throws IOException {
+	public static Graph[] fromSNAPFile(String filename, int numGraphs) throws IOException {
 		BufferedReader br = new BufferedReader(new FileReader(filename));
 		Scanner lineScanner = new Scanner(br);
 				
 		lineScanner.nextLine();	//Skip header
 		lineScanner.nextLine();
 		
-		Graph newGraph = new Graph(Integer.parseInt( lineScanner.nextLine().split("\t")[0].split(":")[1]));	//Create new graph of given size
+		int graphSize = Integer.parseInt(lineScanner.nextLine().split("\t")[0].split(":")[1]);	//Get size of new graphs
+		
+		System.out.println("Got graph size");
+		
+		Graph[] newGraphs = new Graph[numGraphs];	//Create list of Graphs
+		
+		for (int i = 0; i < newGraphs.length; i++) {
+			newGraphs[i] = new Graph(graphSize);				//INitialise new graphs with size
+		}
+		
+		System.out.println("Graphs created");
 		
 		lineScanner.nextLine();
 		
 		HashMap<Integer, Integer> converter = new HashMap<Integer, Integer>();
+		
 		int graphIndex = 0;
 		int currentIndex;
 		
@@ -68,6 +79,8 @@ public class General {
 			}
 			
 		}
+		
+		System.out.println("Conversion complete");
 		
 		lineScanner.close();
 		
@@ -88,7 +101,9 @@ public class General {
 			int weight = 1;
 			
 			if (from != to) {
-				newGraph.getVertex(from).addToAdj(to, weight);
+				for (Graph g: newGraphs) {
+					g.getVertex(from).addToAdj(to, weight);
+				}
 			}
 			
 		}
@@ -96,7 +111,10 @@ public class General {
 		
 		lineScanner.close();
 		
-		return newGraph;
+		for (Graph g: newGraphs) {
+			g.removeLoners();
+		}
+		return newGraphs;
 	}
 	
 	
