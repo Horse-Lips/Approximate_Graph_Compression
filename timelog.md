@@ -157,3 +157,8 @@
 ### 27/01/2020
 * *2 Hours* Fixed issues with independent set alg, reworked quality checks, obtained bigger file (200K nodes)
 * *2 Hours* More testing and tweaks to quality and some algorithms, better abstractions for neatness/readability, fixed some slow parts of the code such as vertex retrieval
+
+## Week 16
+### 31/01/2022
+* *0.5 Hours* Minor tweaks, removed eclipse stuff as no longer using it
+* *0.5 Hours* Meeting with supervisor
