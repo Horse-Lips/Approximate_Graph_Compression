@@ -10,7 +10,9 @@ import java.util.Map.Entry;
 
 import graphComponents.Graph;
 import graphComponents.Vertex;
+
 import graphUtils.SimpleQueuePrio;
+import graphUtils.SimpleTuple;
 
 
 /**
@@ -52,7 +54,7 @@ public class Sparsifier {
 		this.earlyStopping = 0;
 	}
 	
-	
+
 	/**
 	 * Sets the contraction method to the given method
 	 * @param method, a string representing the contraction method to use
@@ -222,9 +224,9 @@ public class Sparsifier {
 	 * 
 	 * @param initial, true if the graph has not been compressed, false otherwise
 	 */
-	private void checkQuality(boolean initial) {
+	private SimpleTuple checkQuality(boolean initial) {
 		if (initial) {
-			if (this.pathLengths != null) { return; }	//Return if path lengths matrix already set
+			if (this.pathLengths != null) { return null; }	//Return if path lengths matrix already set
 			
 			this.pathLengths = new double[terminalList.length][terminalList.length];	//Initialise 2d array of matrix of path lengths
 			
@@ -271,18 +273,15 @@ public class Sparsifier {
 			}
 			
 			avgQuality = (avgQuality / total);
-			
 			qualityEndTime = System.nanoTime();
-			System.out.println("Final quality checks: " + ((qualityEndTime - qualityStartTime) / 1000000000.0) + "s");
-			
-			System.out.println("Time taken to compress graph: " + ((this.endTime - this.startTime) / 1000000000.0) + "s");
-			System.out.println("Resulting graph size: " + this.G.compressedSize());
-			
-			System.out.println("Worst quality: " + worstQuality);
-			System.out.println("Average quality: " + avgQuality);
-			
-			System.out.println("\n");
+
+            SimpleTuple results = new SimpleTuple<Double, Double, Double>(((this.endTime - this.startTime) / 1000000000.0), avgQuality, worstQuality);
+
+            return results;
+
 		}
+        
+        return null;
 
 	}
 	
@@ -293,15 +292,15 @@ public class Sparsifier {
 	 * Setting qualityCheck to true will cause the algorithm to assess the quality of the sparsifier.
 	 * @param qualityCheck
 	 */
-	public void sparsify() {
-		System.out.println("--- " + this.getMethod() + " ---");
+	public SimpleTuple sparsify() {
+		//System.out.println("--- " + this.getMethod() + " ---");
 		
 		/*Perform initial quality checks, locating shortest paths between terminals if they have not been set already*/
 		this.startTime = System.nanoTime();
 		checkQuality(true);
 		this.endTime = System.nanoTime();
 		
-		System.out.println("Initial quality checks carried out in: " + ((this.endTime - this.startTime) / 1000000000.0) + "s");
+		//System.out.println("Initial quality checks carried out in: " + ((this.endTime - this.startTime) / 1000000000.0) + "s");
 		
 		
 		/*Create a priority queue containing all non-terminals ordered by vertex degree, lower vertex is higher priority*/
@@ -309,7 +308,7 @@ public class Sparsifier {
 		SimpleQueuePrio<Integer> nonTermQueue = this.getNonTermQueue();
 		this.endTime = System.nanoTime();
 		
-		System.out.println("Non-terminal queue created in: " + ((this.endTime - this.startTime) / 1000000000.0) + "s");
+		//System.out.println("Non-terminal queue created in: " + ((this.endTime - this.startTime) / 1000000000.0) + "s");
 		
 		
 		Integer currentVertIndex;	//Index of the vertex currently being removed from the graph
@@ -353,7 +352,7 @@ public class Sparsifier {
 		
 		this.endTime = System.nanoTime();
 		
-		checkQuality(false);	//Perform final step of quality check, calculating and displaying time taken and quality of compression
+		return checkQuality(false);	//Perform final step of quality check, calculating and displaying time taken and quality of compression
 	}
 	
 	
@@ -375,7 +374,7 @@ public class Sparsifier {
 			
 		}
 		
-		System.out.println("Used Gaussian elimination " + elimCount + " times and REC " + RECCount + " times");
+		//System.out.println("Used Gaussian elimination " + elimCount + " times and REC " + RECCount + " times");
 	}
 	
 	

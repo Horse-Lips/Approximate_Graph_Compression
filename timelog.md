@@ -162,3 +162,12 @@
 ### 31/01/2022
 * *0.5 Hours* Minor tweaks, removed eclipse stuff as no longer using it
 * *0.5 Hours* Meeting with supervisor
+
+### 04/02/2022
+* *6 Hours* Worked on dissertation: Reworked some sections, wrote some sections, new figures etc
+
+## Week 17
+### 07/02/2022
+* *0.5* Started writing abstract, to be finished throughout writing rest of paper
+* *1 Hour* Added to compression techniques section
+* *7 Hours* Worked on experiments section of dissertation, ran some test experiments, minor changes to code for experiments

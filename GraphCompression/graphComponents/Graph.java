@@ -36,26 +36,15 @@ public class Graph {
 	 */
 	public Vertex getVertex(int i) {
 		return this.vertList[i];
-		
-		/*for (Vertex v: this.vertList) {
-			if (i == v.getIndex()) {
-				return v;
-			}
-		}
-		
-		return null;*/
 	}
 	
 	
 	public void removeLoners() {
-		int count = 1;
 		for (Vertex v: this.vertList) {
 			if (v.getAdjEmpty()) {
-				count++;
 				v.deactivate();
 			}
 		}
-		System.out.println("Removed " + count + " loners");
 	}
 	
 	/**

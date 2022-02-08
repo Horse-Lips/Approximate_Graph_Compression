@@ -10,6 +10,8 @@ import java.util.HashMap;
 import graphComponents.Graph;
 import graphComponents.Vertex;
 
+import graphUtils.SimpleTuple;
+
 
 public class General {
 	/*Loads a graph from an adjacency matrix text file*/
@@ -43,7 +45,7 @@ public class General {
 	}
 	
 	
-	public static Graph[] fromSNAPFile(String filename, int numGraphs) throws IOException {
+	public static Graph fromSNAPFile(String filename) throws IOException {
 		BufferedReader br = new BufferedReader(new FileReader(filename));
 		Scanner lineScanner = new Scanner(br);
 				
@@ -52,15 +54,11 @@ public class General {
 		
 		int graphSize = Integer.parseInt(lineScanner.nextLine().split("\t")[0].split(":")[1]);	//Get size of new graphs
 		
-		System.out.println("Got graph size");
+		//System.out.println("Got graph size");
 		
-		Graph[] newGraphs = new Graph[numGraphs];	//Create list of Graphs
+		Graph newGraph = new Graph(graphSize);	//Create list of Graphs
 		
-		for (int i = 0; i < newGraphs.length; i++) {
-			newGraphs[i] = new Graph(graphSize);				//INitialise new graphs with size
-		}
-		
-		System.out.println("Graphs created");
+		//System.out.println("Graphs created");
 		
 		lineScanner.nextLine();
 		
@@ -80,7 +78,7 @@ public class General {
 			
 		}
 		
-		System.out.println("Conversion complete");
+		//System.out.println("Conversion complete");
 		
 		lineScanner.close();
 		
@@ -101,20 +99,16 @@ public class General {
 			int weight = 1;
 			
 			if (from != to) {
-				for (Graph g: newGraphs) {
-					g.getVertex(from).addToAdj(to, weight);
-				}
+                newGraph.getVertex(from).addToAdj(to, weight);
 			}
 			
 		}
 		
+        newGraph.removeLoners();
 		
 		lineScanner.close();
 		
-		for (Graph g: newGraphs) {
-			g.removeLoners();
-		}
-		return newGraphs;
+		return newGraph;
 	}
 	
 	
