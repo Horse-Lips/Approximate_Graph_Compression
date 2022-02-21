@@ -189,7 +189,7 @@ public class Sparsifier {
 		Set<Integer> terminalSet = new HashSet<Integer>(Arrays.asList(terminalList));
 		for (int i = 0; i < G.size(); i++) {
 			Vertex currentVert = this.G.getVertex(i);
-			
+
 			if (!terminalSet.contains(i) && !currentVert.isDeactivated()) {	//Add all active nonterminals to the queue
 				nonTermQueue.insert(i, currentVert.getAdj().size());	//Priority is degree of Vertex, which is size of adjacency list
 			}
@@ -424,6 +424,39 @@ public class Sparsifier {
 			return;	//Exit if Vertex not in Graph
 		}
 		
+        if (toRemove.getAdj().size() == 1) {    //Remove Vertices of degree 1 without sampling
+            for (Entry<Integer, Double> toRemoveNeighbour: toRemove.getAdj().entrySet()) {
+                Vertex currentNeighbour = G.getVertex(toRemoveNeighbour.getKey());
+
+                currentNeighbour.removeFromAdj(toRemoveIndex);
+                
+                toRemove.deactivate();
+
+                return;
+            }
+
+        } else if (toRemove.getAdj().size() == 2) {
+            for (Entry<Integer, Double> neighbourOneAdj: toRemove.getAdj().entrySet()) {
+                for (Entry<Integer, Double> neighbourTwoAdj: toRemove.getAdj().entrySet()) {
+                    if (neighbourOneAdj.getKey() != neighbourTwoAdj.getKey()) {
+                        Vertex neighbourOne = G.getVertex(neighbourOneAdj.getKey());
+                        Vertex neighbourTwo = G.getVertex(neighbourTwoAdj.getKey());
+
+                        neighbourOne.removeFromAdj(toRemoveIndex);
+                        neighbourTwo.removeFromAdj(toRemoveIndex);
+
+                        neighbourOne.addToAdj(neighbourTwoAdj.getKey(), (neighbourOneAdj.getValue() + neighbourTwoAdj.getValue()));
+                        neighbourTwo.addToAdj(neighbourOneAdj.getKey(), (neighbourOneAdj.getValue() + neighbourTwoAdj.getValue()));
+                        
+                        toRemove.deactivate();
+                        
+                        return;
+                    }
+                }
+            }
+            
+        }
+
 		int superNodeIndex = toRemove.sample();				//Partition edges of the Vertex for efficient sampling
 		Vertex superNode = G.getVertex(superNodeIndex);		//Get superNode (This will be the Vertex that toRemove is "merged" into)
 		

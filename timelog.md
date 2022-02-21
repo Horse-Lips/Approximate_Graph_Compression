@@ -171,3 +171,20 @@
 * *0.5* Started writing abstract, to be finished throughout writing rest of paper
 * *1 Hour* Added to compression techniques section
 * *7 Hours* Worked on experiments section of dissertation, ran some test experiments, minor changes to code for experiments
+
+### 09/02/2022
+* *1.5 Hours* Ran experiments for 3K and 6K graphs. Created simple graph of 3K average qualities
+### 13/02/2022
+* *1.5 Hours* Created graphs from reults of 3K ands 6K Experiment
+
+## Week 18
+### 14/02/2022
+* *0.5 Hours* Meeting with supervisor
+
+### 20/02/2022
+* *4 Hours* Worked on dissertation. Tidied up some of introduction, wrote section on alias method with figure, began putting experiment results into dissertation.
+
+## Week 19
+### 21/02/2022
+* *2 Hours* Tweaked alias method section in dissertation. Small changes to code for efficiency of non-terminals of degree <= 2. Experiments now report average time taken.
+* *0.5 Hours* Meeting with supervisor

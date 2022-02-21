@@ -43,9 +43,6 @@ public class Vertex {
 	private Vertex parent;
 	
 	/*Fields used in sampling edges*/
-	/** Cumulative sum of all edge weights of edges incident to this Vertex (Alias Method Discrete Sampling) */
-	private double totalEdgeWeight;
-	
 	/** Used to check if this Vertex has been partitioned (Alias Method Discrete Sampling) */
 	private boolean partitioned;
 	
@@ -105,8 +102,6 @@ public class Vertex {
 	 */
 	public void addToAdj(int vertIndex, double weight) {
 		this.adjList.put(vertIndex, weight);
-		
-		this.totalEdgeWeight += weight;	//Add weight to the cumulative edge weight
 		this.partitioned = false;		//The edges have changed so we must repartition
 	}
 	
@@ -116,9 +111,7 @@ public class Vertex {
 	 * @param vertIndex, the index of the Vertex to be removed
 	 */
 	public void removeFromAdj(int vertIndex) {
-		this.totalEdgeWeight -= adjList.get(vertIndex);	//Remove weight from cumulative edge weight
 		this.adjList.remove(vertIndex);
-		
 		this.partitioned = false;	//Edges have changed so we must repartition
 	}
 	
@@ -144,18 +137,12 @@ public class Vertex {
 	
 	
 	/**
-	 * Updates the edge containing vertIndex to the weight specified by newWeight. Also updates totalEdgeWeight to reflect this change
+	 * Updates the edge containing vertIndex to the weight specified by newWeight.
 	 * @param vertIndex, index of Vertex whose edge between this Vertex's weight should be updated
 	 * @param newWeight, the new weight of the edge
 	 */
 	public void updateAdj(int vertIndex, double newWeight) {
 		Double oldWeight = this.adjList.put(vertIndex, newWeight);
-		
-		this.totalEdgeWeight += newWeight;
-		
-		if (oldWeight != null) {
-			this.totalEdgeWeight -= oldWeight;
-		}
 	}
 	
 	
@@ -297,14 +284,20 @@ public class Vertex {
 	 */
 	public void partition() {
 		if (this.partitioned) { return; }	//Don't partition if we don't need to
-		
+        
+        double totalEdgeWeight = 0;
+	
+        for (Entry<Integer, Double> adjNode: this.adjList.entrySet()) {
+            totalEdgeWeight += adjNode.getValue();
+        }
+
 		int partitionCount = this.adjList.size();				//Number of partitions to create
 		this.partitions    = new SimpleTuple[partitionCount];	//Initialise partitions for the vertex
 		
 		SimpleAVLTree<Integer> probTree = new SimpleAVLTree<Integer>();	//Initialise AVL tree to store probability-edge pairs
 		
 		for (Entry<Integer, Double> adjNode: this.adjList.entrySet()) {
-			double currentEdgeProb = adjNode.getValue() / this.totalEdgeWeight;	//Calculate current edge probability
+			double currentEdgeProb = adjNode.getValue() / totalEdgeWeight;	//Calculate current edge probability
 			
 			probTree.insert(currentEdgeProb, adjNode.getKey());	//Insert all probability-edge pair into AVL tree
 		}
@@ -350,7 +343,7 @@ public class Vertex {
 		double randProb  = Math.random() / this.partitions.length;			//Generate a random number between 0 and 1 inclusive and divide by amount of partitions
 		int randomPIndex = (int) (Math.random() * this.partitions.length);	//Choose a random partition
 		SimpleTuple<Double, Integer, Integer> partition = partitions[randomPIndex];
-		
+
 		if (randProb <= partition.getFirst()) {	//If randProb lies within the probability then return the "smallest"
 			return partition.getSecond();
 			
