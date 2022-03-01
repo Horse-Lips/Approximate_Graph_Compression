@@ -188,3 +188,11 @@
 ### 21/02/2022
 * *2 Hours* Tweaked alias method section in dissertation. Small changes to code for efficiency of non-terminals of degree <= 2. Experiments now report average time taken.
 * *0.5 Hours* Meeting with supervisor
+* *3 Hours* Tweaks to existing dissertation sections, wrote up independent set section, began discussing experiment results. MInor changes to code and began running 60k vertex graph experiment (still not finished executing :/)
+
+## Week 20
+### 28/02/2022
+* *2 Hours* Tweaks to dissertation, attempted to get 60K graph running but still no luck. It seems that the code runs faster on the windows partition than on the linux partition which is odd
+
+### 01/03/2022
+* *3 Hours* Began writing up implementations section of dissertation
