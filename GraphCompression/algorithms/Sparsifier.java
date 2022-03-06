@@ -423,17 +423,22 @@ public class Sparsifier {
 		if (toRemoveIndex < 0 || toRemoveIndex >= G.size() || (toRemove = G.getVertex(toRemoveIndex)).isDeactivated()) {
 			return;	//Exit if Vertex not in Graph
 		}
-		
-        if (toRemove.getAdj().size() == 1) {    //Remove Vertices of degree 1 without sampling
-            for (Entry<Integer, Double> toRemoveNeighbour: toRemove.getAdj().entrySet()) {
-                Vertex currentNeighbour = G.getVertex(toRemoveNeighbour.getKey());
 
-                currentNeighbour.removeFromAdj(toRemoveIndex);
-                
-                toRemove.deactivate();
+        if (toRemove.getAdj().size() == 0) {    //Deactivate non-terminals with no neighbours
+            toRemove.deactivate();
 
-                return;
-            }
+            return;
+
+        } else if (toRemove.getAdj().size() == 1) {    //Remove Vertices of degree 1 without sampling
+           for (Entry<Integer, Double> toRemoveNeighbour: toRemove.getAdj().entrySet()) {
+               Vertex currentNeighbour = G.getVertex(toRemoveNeighbour.getKey());
+
+               currentNeighbour.removeFromAdj(toRemoveIndex);
+            
+               toRemove.deactivate();
+
+               return;
+           }
 
         } else if (toRemove.getAdj().size() == 2) {
             for (Entry<Integer, Double> neighbourOneAdj: toRemove.getAdj().entrySet()) {

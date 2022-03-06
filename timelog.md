@@ -196,3 +196,8 @@
 
 ### 01/03/2022
 * *3 Hours* Began writing up implementations section of dissertation
+
+### 06/03/2022
+* *6 Hours* Went over entire dissertation adding/removing/reworking sections to neaten and include figures more nicely, trimmed intro, turned formal definitions into its own chapter, continued writing up section on implementations, possibly finalised structure of headings of dissertation but may change to add or remove necessary sections, began writing up and reading a bit for background work section.
+
+##Week 21
