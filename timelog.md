@@ -199,5 +199,16 @@
 
 ### 06/03/2022
 * *6 Hours* Went over entire dissertation adding/removing/reworking sections to neaten and include figures more nicely, trimmed intro, turned formal definitions into its own chapter, continued writing up section on implementations, possibly finalised structure of headings of dissertation but may change to add or remove necessary sections, began writing up and reading a bit for background work section.
+* *2 Hours* Alterations to code to prevent errors in larger graphs with isolated components. Ran more experiments for 3k and 6k REC early stopping at 1-100%
 
 ##Week 21
+### 07/03/2022
+* *1 Hour* Runnning experiment on 60k node graph (in progress), minor tweaks to dissertation (trying to get figures in the right places!!!!!!)
+* *0.5 Hours* Meeting with supervisor
+
+### 09/03/2022
+* *1 Hour* Ran experiments on 60K graph
+
+### 11/03/2022
+* *1.5 Hours* Minor tweaks to code for running of experiments for larger graphs (200k and 1.3M nodes), 1.3M nodes ran for a few days without terminating even for SPT, 200K executes fast but it seems as though quality checkjs and dijkstra's algorithm take the longest, will complete 200K noides and then have 1.3M nodes running for a few days to hopefully add to the paper!
+* *3 Hours* Been running 200K graph experiment, no progress so many need to run it overnight. Added more algorithms and descriptions to implementations section of dissertation
