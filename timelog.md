@@ -212,3 +212,6 @@
 ### 11/03/2022
 * *1.5 Hours* Minor tweaks to code for running of experiments for larger graphs (200k and 1.3M nodes), 1.3M nodes ran for a few days without terminating even for SPT, 200K executes fast but it seems as though quality checkjs and dijkstra's algorithm take the longest, will complete 200K noides and then have 1.3M nodes running for a few days to hopefully add to the paper!
 * *3 Hours* Been running 200K graph experiment, no progress so many need to run it overnight. Added more algorithms and descriptions to implementations section of dissertation
+## 13/03/2022
+* *9 Hours* Dissertation work, recreated graphs for experiment results section and began rewriting experiment section. Wrote up analysis section, touched up other sections, finished implementations section, began writing conclusion and minor change to abstract. 200K node graph experiment is still running in the background for the REC at all percentages of early stopping and if it carries on for weeks i might just give up :/, I definitely should've included some indication of which percentage the algorithm was currently using so that I could monitor progress so as of now I am blind but as the experiment has been running for a few days I don't want to terminate it.
+
