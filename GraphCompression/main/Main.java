@@ -43,12 +43,12 @@ public class Main {
         //double[][] initialPathLengths = spars.getPathLengths();
 
         
-        System.out.println("\n------ SPT ------");
+        /*System.out.println("\n------ SPT ------");
         g = General.fromSNAPFile(file);
 
         spars = new Sparsifier(g);
         spars.setTerminals(terminals);
-        spars.setMethod("sptree");
+        spars.setMethod("");
         //spars.setPathLengths(initialPathLengths);
 
         SimpleTuple results = spars.sparsify();
@@ -59,13 +59,13 @@ public class Main {
 
         double[][] initialPathLengths = spars.getPathLengths();
         
-        System.out.println("\n------ Standard REC ------");
+        System.out.println("\n------ Standard REC ------");*/
 
-        double avgAvg   = 0;
-        double avgWorst = 0;
-        double avgTime  = 0;
+        //double avgAvg   = 0;
+        //double avgWorst = 0;
+        //double avgTime  = 0;
 
-        for (int i = 0; i < 10; i++) {
+        /*for (int i = 0; i < 10; i++) {
             g = General.fromSNAPFile(file);
             
             spars = new Sparsifier(g);
@@ -78,6 +78,8 @@ public class Main {
             avgTime  += (double) results.getFirst();            
             avgAvg   += (double) results.getSecond();
             avgWorst += (double) results.getThird();
+
+            
         }
 
         System.out.println("Average of average qualities: " + (avgAvg / 10));
@@ -113,7 +115,31 @@ public class Main {
 
 
         System.out.println("\n------ REC With Early Stopping After 25% of Non-Terminals Contracted ------");
+        
+        */
 
+
+        double avgAvg   = 0;
+        double avgWorst = 0;
+        double avgTime  = 0;
+
+        g = General.fromSNAPFile(file);
+
+        spars = new Sparsifier(g);
+        spars.setTerminals(terminals);
+        spars.setMethod("");
+        spars.setEarlyStopping(70);
+
+        SimpleTuple results = spars.sparsify();
+        
+        System.out.println("Time taken: " + results.getFirst());
+        System.out.println("Average quality: " + results.getSecond());
+        System.out.println("Worst quality: " + results.getThird());
+
+        double[][] initialPathLengths = spars.getPathLengths();
+
+
+        /*
         avgAvg   = 0;
         avgWorst = 0;
         avgTime  = 0;
@@ -226,30 +252,32 @@ public class Main {
         double[] avgQuals   = new double[100];
         double[] worstQuals = new double[100];
         
-        for (int percent = 0; percent < 100; percent++) {
+        for (int percent = 71; percent < 100; percent++) {
             avgAvg   = 0;
             avgWorst = 0;
             avgTime  = 0;
 
-            for (int i = 0; i < 10; i++) {
-                g = General.fromSNAPFile(file);
-                
-                spars = new Sparsifier(g);
-                spars.setTerminals(terminals);
-                spars.setMethod("");
-                spars.setEarlyStopping(percent);
-                spars.setPathLengths(initialPathLengths);
-
-                results = spars.sparsify();
-                
-                avgTime  += (double) results.getFirst();            
-                avgAvg   += (double) results.getSecond();
-                avgWorst += (double) results.getThird();
-            }
             
-            runTimes[percent] = avgTime / 10;
-            avgQuals[percent] = avgAvg / 10;
-            worstQuals[percent] = avgWorst / 10;
+            g = General.fromSNAPFile(file);
+            
+            spars = new Sparsifier(g);
+            spars.setTerminals(terminals);
+            spars.setMethod("");
+            spars.setEarlyStopping(percent);
+            spars.setPathLengths(initialPathLengths);
+
+            results = spars.sparsify();
+            
+            avgTime  = (double) results.getFirst();            
+            avgAvg   = (double) results.getSecond();
+            avgWorst = (double) results.getThird();
+            
+            
+            runTimes[percent] = avgTime;
+            avgQuals[percent] = avgAvg;
+            worstQuals[percent] = avgWorst;
+
+            System.out.println(percent + 1 + " Done!");
 
         }
 

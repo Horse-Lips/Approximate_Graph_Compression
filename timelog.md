@@ -201,7 +201,7 @@
 * *6 Hours* Went over entire dissertation adding/removing/reworking sections to neaten and include figures more nicely, trimmed intro, turned formal definitions into its own chapter, continued writing up section on implementations, possibly finalised structure of headings of dissertation but may change to add or remove necessary sections, began writing up and reading a bit for background work section.
 * *2 Hours* Alterations to code to prevent errors in larger graphs with isolated components. Ran more experiments for 3k and 6k REC early stopping at 1-100%
 
-##Week 21
+## Week 21
 ### 07/03/2022
 * *1 Hour* Runnning experiment on 60k node graph (in progress), minor tweaks to dissertation (trying to get figures in the right places!!!!!!)
 * *0.5 Hours* Meeting with supervisor
@@ -215,3 +215,27 @@
 ## 13/03/2022
 * *9 Hours* Dissertation work, recreated graphs for experiment results section and began rewriting experiment section. Wrote up analysis section, touched up other sections, finished implementations section, began writing conclusion and minor change to abstract. 200K node graph experiment is still running in the background for the REC at all percentages of early stopping and if it carries on for weeks i might just give up :/, I definitely should've included some indication of which percentage the algorithm was currently using so that I could monitor progress so as of now I am blind but as the experiment has been running for a few days I don't want to terminate it.
 
+## Week 22
+### 14/04/2022
+* *1 Hour* Some work before the meeting to look into different types of graphs for showing results
+* *0.5 Hours* Meeting with supervisor
+* *6 Hours* Running 200K all percentage experiment
+
+### 15/04/2022
+* *6 Hours* Running 200K all percentage experiment
+
+### 16/04/2022
+* *6 Hours* Running 200K all percentage experiment
+
+### 17/04/2022
+* *6 Hours* Running 200K all percentage experiment
+
+### 18/04/2022
+* *6 Hours* Running 200K all percentage experiment
+
+### 19/04/2022
+* *6 Hours* Running 200K all percentage experiment
+
+### 20/04/2022
+* *6 Hours* Running 200K all percentage experiment (ITS FINALLY FINISHED!!!)
+* *3 Hours* Refined some sections of the dissertation, aligned figures more neatly, tidied up text and figures in general, rewrote conclusion.
