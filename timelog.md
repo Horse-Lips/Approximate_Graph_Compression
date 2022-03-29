@@ -128,7 +128,7 @@
 ### 13/01/2022
 * *1 Hour* Finished critical summary of Compression of Weighted Graphs (2011) from yesterday
 * *4 Hours* Read and wrote critical summary of Preserving Terminal Distances Using Graph Minor (2018)
-* 1 Hour* Improvements and abstractions to sparsifier class, new sparsification method
+* *1 Hour* Improvements and abstractions to sparsifier class, new sparsification method
 
 ## Week 14
 ### 17/01/2022
@@ -216,26 +216,59 @@
 * *9 Hours* Dissertation work, recreated graphs for experiment results section and began rewriting experiment section. Wrote up analysis section, touched up other sections, finished implementations section, began writing conclusion and minor change to abstract. 200K node graph experiment is still running in the background for the REC at all percentages of early stopping and if it carries on for weeks i might just give up :/, I definitely should've included some indication of which percentage the algorithm was currently using so that I could monitor progress so as of now I am blind but as the experiment has been running for a few days I don't want to terminate it.
 
 ## Week 22
-### 14/04/2022
+### 14/03/2022
 * *1 Hour* Some work before the meeting to look into different types of graphs for showing results
 * *0.5 Hours* Meeting with supervisor
 * *6 Hours* Running 200K all percentage experiment
 
-### 15/04/2022
+### 15/03/2022
 * *6 Hours* Running 200K all percentage experiment
 
-### 16/04/2022
+### 16/03/2022
 * *6 Hours* Running 200K all percentage experiment
 
-### 17/04/2022
+### 17/03/2022
 * *6 Hours* Running 200K all percentage experiment
 
-### 18/04/2022
+### 18/03/2022
 * *6 Hours* Running 200K all percentage experiment
 
-### 19/04/2022
+### 19/03/2022
 * *6 Hours* Running 200K all percentage experiment
 
-### 20/04/2022
+### 20/03/2022
 * *6 Hours* Running 200K all percentage experiment (ITS FINALLY FINISHED!!!)
 * *3 Hours* Refined some sections of the dissertation, aligned figures more neatly, tidied up text and figures in general, rewrote conclusion.
+
+## Week 23
+### 21/03/2022
+* *1 Hour* Refinements to intro and preliminaries sections of dissertation
+* *0.5 Hours* Meeting with supervisor
+* *10 Hours* Re-worked ALL sections of dissertation to include more mathematical descriptions of things such as definitions. Neatened lots of sections through doing this and added several description boxes/remark boxes. Also updated defintions to refer to sparsifiers/spanners, refined definitions of quality and graph operations etc, made lots of adjustments to the layout of the dissertation too so that it looks much neater.
+
+### 22/03/2022
+* *9 Hours* More refinements to all sections, added certain details that were missed such as explaining why sparsifiers are exact/approx. Refinements to all sections, fixed section references and referenced definitions. Slightly adjusted layout. Began work on powerpoint presentation. Fixed final figure of alias method explanation.
+
+### 23/03/2022
+* *6 Hours* More dissertation refinements, correcting definitions etc
+
+## 25/03/2022
+* *6 Hours* Final few refinements to all sections of dissertation, got some better sources for distance preservers etc
+
+## 26/03/2022
+* *6 Hours* Finally began writing up background work section and listing relevant papers for it from papers that I've read previously
+
+## 27/03/2022
+* *7 Hours* Corrected some definitions in dissertation. Worked on presentation. Touched up several sections and corrected mistakes such as double words. Added to background work section and abstract.
+
+## 28/03/2022
+* *1 Hour* Minor tweaks to definitions and order of definitions.
+* *0.5 Hours* Final supervisor meeting before submission deadline
+* *2 Hours* Began recording presentation
+* *2 Hours* Finished and recorded presentation
+* *2 Hours* More refinements to dissertation
+
+## 29/03/2022
+* *3 Hours* Refined some sections and finalised background work section
+* *3 Hours* Minor tweaks and refinements, finalised up to section 5
+* *2 Hours* Updated code to support command line arguments for compressing graphs, details to be added to manual.md

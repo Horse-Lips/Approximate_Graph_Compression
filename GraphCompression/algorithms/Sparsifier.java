@@ -316,13 +316,13 @@ public class Sparsifier {
 		this.startTime = System.nanoTime();
 		
 		/*Carry out removal of non-terminals with the specified method*/
-		if (this.method == "gauss") {			//Gaussian elimination method
+		if (this.method.equals("gauss")) {			//Gaussian elimination method
 			while ((currentVertIndex = nonTermQueue.pop()) != null) { this.eliminate(currentVertIndex); }
 		
-		} else if (this.method == "sptree") {	//Shortest path tree method
+		} else if (this.method.equals("sptree")) {	//Shortest path tree method
 			this.SPTree();
 					
-		} else if (this.method == "random") {	//Randomly choose between Gaussian elimination and REC methods
+		} else if (this.method.equals("random")) {	//Randomly choose between Gaussian elimination and REC methods
 			randomMethod(nonTermQueue);
 						
 		} else {								//Default to REC method			

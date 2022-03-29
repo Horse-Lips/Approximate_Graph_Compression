@@ -10,293 +10,126 @@ import graphUtils.SimpleTuple;
 
 
 public class Main {
+
+    static Graph g;
+    static Sparsifier spars;
+
+    static int startRange, endRange;
+    static boolean useRange = false;
+
 	public static void main(String[] args) throws IOException {
-		//String file = "/home/callm/Life/UniGlasgow/Year4/Project/SNAP graphs/Autonomous Systems/as19971108.txt";		//3K Node graph
-		//String file = "/home/callm/Life/UniGlasgow/Year4/Project/SNAP graphs/Autonomous Systems/as20000102.txt";		//6.5K Node graph
-		//String file = "/home/callm/Life/UniGlasgow/Year4/Project/SNAP graphs/BrightKite/Brightkite_edges.txt";	//60K Node graph
-		String file = "/home/callm/Life/UniGlasgow/Year4/Project/SNAP graphs/Gowalla/Gowalla_edges.txt";	//200K Node graph
-		//String file = "/home/callm/Life/UniGlasgow/Year4/Project/SNAP graphs/Road Networks/Texas/roadNet-TX.txt";	//1.3M node graph
 
-		int numTerminals = 10;
-		
-		long startTime, endTime;
-		
-        
-        System.out.println("------ Gaussian Elimination ------");
-        Graph g = General.fromSNAPFile(file);       //Load file
+        loadFromArgs(args);
 
-		Sparsifier spars = new Sparsifier(g);       //Create sparsifier and set graph
-        
-        spars.randomTerminals(numTerminals);        //Generate some random terminals
-		Integer[] terminals = spars.getTerminals(); //And retrieve them for later use
+        if (useRange) {
+            for (int i = startRange; i <= endRange; i++) {
+                args[3] = Integer.toString(i);
+                loadFromArgs(args);
 
-        
-		//spars.setMethod("gauss");
+		        SimpleTuple results = spars.sparsify();
+                
+                System.out.println("Early stopping at " + i + "%");
+                System.out.println("Time taken: "      + results.getFirst());
+                System.out.println("Average Quality: " + results.getSecond());
+                System.out.println("Worst Quality: "   + results.getThird());
+            }
 
-        //Returns a typle of (time, average quality, worst quality)
-        //SimpleTuple results = spars.sparsify();
-        
-        //System.out.println("Time taken: " + results.getFirst());
-        //System.out.println("Average quality: " + results.getSecond());
-        //System.out.println("Worst quality: " + results.getThird());
+        } else {
+		    SimpleTuple results = spars.sparsify();
 
-        //double[][] initialPathLengths = spars.getPathLengths();
-
-        
-        /*System.out.println("\n------ SPT ------");
-        g = General.fromSNAPFile(file);
-
-        spars = new Sparsifier(g);
-        spars.setTerminals(terminals);
-        spars.setMethod("");
-        //spars.setPathLengths(initialPathLengths);
-
-        SimpleTuple results = spars.sparsify();
-        
-        System.out.println("Time taken: " + results.getFirst());
-        System.out.println("Average quality: " + results.getSecond());
-        System.out.println("Worst quality: " + results.getThird());
-
-        double[][] initialPathLengths = spars.getPathLengths();
-        
-        System.out.println("\n------ Standard REC ------");*/
-
-        //double avgAvg   = 0;
-        //double avgWorst = 0;
-        //double avgTime  = 0;
-
-        /*for (int i = 0; i < 10; i++) {
-            g = General.fromSNAPFile(file);
-            
-            spars = new Sparsifier(g);
-            spars.setTerminals(terminals);
-            spars.setMethod("");
-            spars.setPathLengths(initialPathLengths);
-
-            results = spars.sparsify();
-            
-            avgTime  += (double) results.getFirst();            
-            avgAvg   += (double) results.getSecond();
-            avgWorst += (double) results.getThird();
-
-            
+            System.out.println("Time taken: "      + results.getFirst());
+            System.out.println("Average Quality: " + results.getSecond());
+            System.out.println("Worst Quality: "   + results.getThird());
         }
 
-        System.out.println("Average of average qualities: " + (avgAvg / 10));
-        System.out.println("Average of worst qualities: "   + (avgWorst / 10));
-        System.out.println("Average Execution Time: "       + (avgTime / 10));
+	}
+
+
+    private static void loadFromArgs(String[] args) {
+        /*Create the Graph object*/
+        try {
+            g = General.fromSNAPFile(args[0]);
+
+        } catch (Exception e) {
+            System.out.println("Unable to load file.\n");
+            return;
+
+        }
+
+        
+        /*Create the Sparsifier object*/
+        try {
+            spars = new Sparsifier(g);
+
+        } catch (Exception e) {
+            System.out.println("Unable to create sparsifier.\n");
+            return;
+        }
+
+        
+        try {
+            spars.setMethod(args[1]);
+
+        } catch (Exception e) {
+            System.out.println("Method not given, or not recognised.\n");
+
+        }
+        
+        try {
+            spars.randomTerminals(Integer.parseInt(args[2])); //Assign random terminals if number supplied
+
+        } catch (Exception e) {
+            if (e instanceof ArrayIndexOutOfBoundsException) {
+                System.out.println("No terminals supplied.\n");
+                return;
+
+            } else if (e instanceof NumberFormatException) {
+                try {
+                    spars.setTerminals(General.terminalsFromFile(args[2])); //Otherwise assign list of defined terminals
+
+                } catch (Exception f) {
+                    System.out.println("Terminals formatted incorrectly.\n");
+                    return;
+                }
+
+            } else {
+                System.out.println("Unknown error when loading terminals.\n");
+            }
+
+        }
         
 
-        System.out.println("\n------ REC with Independent Set------");
+        /*See if early stopping percentage was supplied as either integer or range*/            
+        try {
+            spars.setEarlyStopping(Integer.parseInt(args[3]));
+            spars.setMethod("");    //Return to REC if early stopping used
 
-        avgAvg   = 0;
-        avgWorst = 0;
-        avgTime  = 0;
+        } catch (Exception e) {
+            try {
+                String[] ranges = args[3].split("-");
 
-        for (int i = 0; i < 10; i++) {
-            g = General.fromSNAPFile(file);
-            
-            spars = new Sparsifier(g);
-            spars.setTerminals(terminals);
+                startRange = Integer.parseInt(ranges[0]);
+                endRange   = Integer.parseInt(ranges[1]);
+
+                useRange = true;
+
+                spars.setMethod("");
+
+            } catch (Exception f) {
+                System.out.println("No early stopping or incorrec formatting.");
+
+            }
+
+        }
+
+        try {
+            String indSet = args[4];
             spars.setMethod("");
             spars.setUseIndSet(true);
-            spars.setPathLengths(initialPathLengths);
 
-            results = spars.sparsify();
-            
-            avgTime  += (double) results.getFirst();            
-            avgAvg   += (double) results.getSecond();
-            avgWorst += (double) results.getThird();
-        }
-
-        System.out.println("Average of average qualities: " + (avgAvg / 10));
-        System.out.println("Average of worst qualities: "   + (avgWorst / 10));
-        System.out.println("Average Execution Time: "       + (avgTime / 10));
-
-
-        System.out.println("\n------ REC With Early Stopping After 25% of Non-Terminals Contracted ------");
-        
-        */
-
-
-        double avgAvg   = 0;
-        double avgWorst = 0;
-        double avgTime  = 0;
-
-        g = General.fromSNAPFile(file);
-
-        spars = new Sparsifier(g);
-        spars.setTerminals(terminals);
-        spars.setMethod("");
-        spars.setEarlyStopping(70);
-
-        SimpleTuple results = spars.sparsify();
-        
-        System.out.println("Time taken: " + results.getFirst());
-        System.out.println("Average quality: " + results.getSecond());
-        System.out.println("Worst quality: " + results.getThird());
-
-        double[][] initialPathLengths = spars.getPathLengths();
-
-
-        /*
-        avgAvg   = 0;
-        avgWorst = 0;
-        avgTime  = 0;
-
-        for (int i = 0; i < 10; i++) {
-            g = General.fromSNAPFile(file);
-            
-            spars = new Sparsifier(g);
-            spars.setTerminals(terminals);
-            spars.setMethod("");
-            spars.setEarlyStopping(25);
-            spars.setPathLengths(initialPathLengths);
-
-            results = spars.sparsify();
-            
-            avgTime  += (double) results.getFirst();            
-            avgAvg   += (double) results.getSecond();
-            avgWorst += (double) results.getThird();
-        }
-
-        System.out.println("Average of average qualities: " + (avgAvg   / 10));
-        System.out.println("Average of worst qualities: "   + (avgWorst / 10));
-        System.out.println("Average Execution Time: "       + (avgTime  / 10));
-
-
-        System.out.println("\n------ REC With Early Stopping After 50% of Non-Terminals Contracted ------");
-
-        avgAvg   = 0;
-        avgWorst = 0;
-        avgTime  = 0;
-
-        for (int i = 0; i < 10; i++) {
-            g = General.fromSNAPFile(file);
-            
-            spars = new Sparsifier(g);
-            spars.setTerminals(terminals);
-            spars.setMethod("");
-            spars.setEarlyStopping(50);
-            spars.setPathLengths(initialPathLengths);
-
-            results = spars.sparsify();
-            
-            avgTime  += (double) results.getFirst();            
-            avgAvg   += (double) results.getSecond();
-            avgWorst += (double) results.getThird();
-        }
-
-        System.out.println("Average of average qualities: " + (avgAvg / 10));
-        System.out.println("Average of worst qualities: "   + (avgWorst / 10));
-        System.out.println("Average Execution Time: "       + (avgTime / 10));
-
-
-        System.out.println("\n------ REC With Early Stopping After 75% of Non-Terminals Contracted ------");
-
-        avgAvg   = 0;
-        avgWorst = 0;
-        avgTime  = 0;
-
-        for (int i = 0; i < 10; i++) {
-            g = General.fromSNAPFile(file);
-            
-            spars = new Sparsifier(g);
-            spars.setTerminals(terminals);
-            spars.setMethod("");
-            spars.setEarlyStopping(75);
-            spars.setPathLengths(initialPathLengths);
-
-            results = spars.sparsify();
-            
-            avgTime  += (double) results.getFirst();            
-            avgAvg   += (double) results.getSecond();
-            avgWorst += (double) results.getThird();
-        }
-
-        System.out.println("Average of average qualities: " + (avgAvg / 10));
-        System.out.println("Average of worst qualities: "   + (avgWorst / 10));
-        System.out.println("Average Execution Time: "       + (avgTime / 10));
-
-
-        /*System.out.println("\n------ Random Selection Algorithm ------");
-
-        avgAvg   = 0;
-        avgWorst = 0;
-        avgTime  = 0;
-
-        for (int i = 0; i < 10; i++) {
-            g = General.fromSNAPFile(file);
-            
-            spars = new Sparsifier(g);
-            spars.setTerminals(terminals);
-            spars.setMethod("random");
-            spars.setEarlyStopping(75);
-            spars.setPathLengths(initialPathLengths);
-
-            results = spars.sparsify();
-            
-            avgTime  += (double) results.getFirst();            
-            avgAvg   += (double) results.getSecond();
-            avgWorst += (double) results.getThird();
-        }
-
-        System.out.println("Average of average qualities: " + (avgAvg / 10));
-        System.out.println("Average of worst qualities: "   + (avgWorst / 10));
-        System.out.println("Average Execution Time: "       + (avgTime / 10));*/
-
-
-        System.out.println("\n------ REC Every Percent ------");
-
-        double[] runTimes   = new double[100];
-        double[] avgQuals   = new double[100];
-        double[] worstQuals = new double[100];
-        
-        for (int percent = 71; percent < 100; percent++) {
-            avgAvg   = 0;
-            avgWorst = 0;
-            avgTime  = 0;
-
-            
-            g = General.fromSNAPFile(file);
-            
-            spars = new Sparsifier(g);
-            spars.setTerminals(terminals);
-            spars.setMethod("");
-            spars.setEarlyStopping(percent);
-            spars.setPathLengths(initialPathLengths);
-
-            results = spars.sparsify();
-            
-            avgTime  = (double) results.getFirst();            
-            avgAvg   = (double) results.getSecond();
-            avgWorst = (double) results.getThird();
-            
-            
-            runTimes[percent] = avgTime;
-            avgQuals[percent] = avgAvg;
-            worstQuals[percent] = avgWorst;
-
-            System.out.println(percent + 1 + " Done!");
+        } catch (Exception e) {
+            System.out.println("No independent set supplied.\n");
 
         }
-
-        String timeString  = "Times: [";
-        String avgString   = "Average Qualities: [";
-        String worstString = "Worst Qualities: [";
-        
-        for (int i = 0; i < 99; i++) {
-            timeString  = timeString  + Double.toString(runTimes[i])   + ", ";
-            avgString   = avgString   + Double.toString(avgQuals[i])   + ", ";
-            worstString = worstString + Double.toString(worstQuals[i]) + ", ";
-        }
-
-        timeString  = timeString  + Double.toString(runTimes[99])   + "]";
-        avgString   = avgString   + Double.toString(avgQuals[99])   + "]";
-        worstString = worstString + Double.toString(worstQuals[99]) + "]";
-
-        System.out.println(timeString);
-        System.out.println(avgString);
-        System.out.println(worstString);
-	}
+    }
 }

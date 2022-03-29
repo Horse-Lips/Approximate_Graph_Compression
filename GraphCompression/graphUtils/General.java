@@ -112,6 +112,21 @@ public class General {
 	}
 	
 	
+    public static Integer[] terminalsFromFile(String filename) throws IOException {
+        BufferedReader br = new BufferedReader(new FileReader(filename));
+		Scanner lineScanner = new Scanner(br);
+				
+		String[]  terminalString = lineScanner.nextLine().split(", ");
+        Integer[] terminals      = new Integer[terminalString.length];
+
+        for (int i = 0; i < terminalString.length; i++) {
+            terminals[i] = Integer.parseInt(terminalString[i]);
+        }
+
+        return terminals;
+    }
+
+
 	/*Prints a path in Graph G*/
 	public static void printPath(Vertex end) {
 		String retString = "";
