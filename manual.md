@@ -36,7 +36,7 @@ This is an **optional** flag which will override both the sparsification method 
 Command line usage as provided is quite simplistic and is merely used for experimentation as the outputs are vague and experimentation is limited. Custom usage in the form of importing the libraries or defining your own main.java file is supported and this section describes the utilities and functionalities of the code.  
   
 Firstly a graph must be created. The Graph data structure can be found in the src/graphComponents/Graph.java file. Two utilities exist for loading a graph from a file, the utility described in the previous **Graph Filename** section can be found in the src/graphUtils/General.java file and is called fromSNAPFile(String filename). The expected format is described in the aforementioned section. Another utility for loading a graph from a text file contained within the Genera.java file is the fromFile(String filename) function, which loads a graph from an adjacency matrix representation where the first line indicates the number of vertices and the remaining lines are the adjacency matrix of edge weights. An example graph creation is shown below.
-    ```Graph g = General.fromSNAPFile(filename);  
+    ```Graph g = General.fromSNAPFile(filename);```
   
 A sparsifier object, found in the src/algorithms/Sparsifier.java file may be created with this graph as follows:  
     ```Sparsifier spars = new Sparsifier(g);```  
