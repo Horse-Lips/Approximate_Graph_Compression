@@ -272,3 +272,6 @@
 * *3 Hours* Refined some sections and finalised background work section
 * *3 Hours* Minor tweaks and refinements, finalised up to section 5
 * *2 Hours* Updated code to support command line arguments for compressing graphs, details to be added to manual.md
+
+## 31/03/2022
+* *2 Hours* Finalised all sections of dissertation ready for submission
