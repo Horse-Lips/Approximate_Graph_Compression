@@ -6,7 +6,11 @@ The code is provided with a pre-defined main.java file. The code may be compiled
     ```javac -client main/Main.java```  
 The code may then be run by entering a command of the form:  
     ```java -client main.Main [Graph Filename] [Sparsification Method] [Terminals] [Percentage for Early Stopping] [Independent Set]```  
-    
+Some examples are shown below:  
+    ```java -client main.Main Graphs/3KAS.txt sptree 10```  
+    ```java -client main.Main Graphs/6KAS.txt REC Graphs/exampleTerminals.txt 10-15```  
+    ```java -client main.Main Graphs/60KBrightKite.txt REC 10 100 ind```  
+
 ### Graph Filename
 The graph may be supplied as any text file containing a representation of a graph. The command line input expects a graph of a specific format, particularly those found in SNAP graphs (snap.stanford.edu/data/). The format is as follows:  
 *  *Lines 1 and 2:* Reserved for description of the graph, these **MUST** be included
