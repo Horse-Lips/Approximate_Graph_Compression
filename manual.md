@@ -17,7 +17,7 @@ The graph may be supplied as any text file containing a representation of a grap
     *  FromNodeId   ToNodeId
     *  Please note the tab separating the two
 *  The rest of the file contains two vertex indexes per line separated by tabs indicating the from and to node IDs for example
-    *  1 5 indicates an edge between vertices 1 and 5
+    *  1 5 indicates an edge between vertices 1 and 5  
 Several graphs of this format, specifically those used for experimentation in the dissertation, are provided in the src/Graphs/ folder.
 
 ### Sparsification Method
