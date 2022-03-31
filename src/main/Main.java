@@ -52,7 +52,7 @@ public class Main {
 
         } catch (Exception e) {
             System.out.println("Unable to load file.\n");
-            return;
+            System.exit(0);
 
         }
 
@@ -63,7 +63,7 @@ public class Main {
 
         } catch (Exception e) {
             System.out.println("Unable to create sparsifier.\n");
-            return;
+            System.exit(0);
         }
 
         
@@ -81,7 +81,7 @@ public class Main {
         } catch (Exception e) {
             if (e instanceof ArrayIndexOutOfBoundsException) {
                 System.out.println("No terminals supplied.\n");
-                return;
+                System.exit(0);
 
             } else if (e instanceof NumberFormatException) {
                 try {
@@ -89,7 +89,7 @@ public class Main {
 
                 } catch (Exception f) {
                     System.out.println("Terminals formatted incorrectly.\n");
-                    return;
+                    System.exit(0);
                 }
 
             } else {

@@ -275,3 +275,5 @@
 
 ## 31/03/2022
 * *2 Hours* Finalised all sections of dissertation ready for submission
+* *2 Hours* Finalised manual.md ready for submission
+* *0.001 Hours* Submitted work
